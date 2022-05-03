@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+</head>
+<body>
+<header>
+    <ul>
+        <li><img src="images/sfpps.png"></li>
+        <li><button type="submit"><a href="/login">Login</a></button></li>
+    </ul>
+</header>
+<div>
+    <h3>Register</h3>
+    <form action="/register" method="post">
+        {% csrf_token %}
+        <label>Phone Number</label>
+        <input type="number" id="phonenumber" name="phonenumber" placeholder="09********">
+        <br>
+        <label>Username</label>
+        <input type="text" id="username" name="username" placeholder="user123">
+        <br>
+        <label>Password</label>
+        <input type="password" id="password", name="password" placeholder="*******">
+        <br>
+        <label>Confirm Password</label>
+        <input type="password" id="confirmpassword", name="confirmpassword" placeholder="*******">
+        <br>
+        <button type="submit">Register</button>
+    </form>
+</div>
+</body>
+</html>
