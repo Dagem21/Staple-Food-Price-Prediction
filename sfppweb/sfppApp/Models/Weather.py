@@ -1,3 +1,6 @@
+from ..Database import databse
+
+
 class Weather:
 
     location = None
@@ -5,19 +8,41 @@ class Weather:
 
     def __init__(self, location):
         self.location = location
+        res, err = databse.getData(location)
+        if err is None:
+            weather = {}
+            for data in res:
+                weather[data.month] = data.precipitation
+            self.precipitation = weather
 
     def set_location(self, location):
+        res, err = databse.getData(location)
+        if err is None:
+            weather = {}
+            for data in res:
+                weather[data.month] = data.precipitation
+            self.precipitation = weather
+        else:
+            return False
         self.location = location
-        return
-
-    def get_weather(self):
-        return self
+        return True
 
     def get_weather(self, location):
-        return None
+        res, err = databse.getData(location)
+        if err is None:
+            weather = {}
+            for data in res:
+                weather[data.month] = data.precipitation
+            return weather
+        else:
+            return None
 
     def get_weather(self, location, month):
-        return None
-
-    def add_weather(self, location, month, precipitaiton):
-        return None
+        res, err = databse.getData(location)
+        if err is None:
+            weather = {}
+            for data in res:
+                weather[data.month] = data.precipitation
+            return weather[month]
+        else:
+            return None

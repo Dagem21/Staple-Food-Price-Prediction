@@ -7,20 +7,16 @@
 <body>
 <header>
     <ul>
-        <li><img src="images/sfpps.png"></li>
+        <li><a href="/">{% load static %}<img src="{% static 'sfppApp/sfpps.png' %}"></a></li>
         <li><button type="submit"><a href="/register">Register</a></button></li>
     </ul>
 </header>
 <div>
     <h3>Login</h3>
     <form action="/login" method="post">
+        <label>Error: {{error}}</label>
         {% csrf_token %}
-        <label>Phone Number</label>
-        <input type="number" id="phonenumber" name="phonenumber" placeholder="Enter your phone number">
-        <br>
-        <label>Password</label>
-        <input type="password" id="password", name="password" placeholder="Enter your password">
-        <br>
+        {{form}}
         <button type="submit">Login</button>
     </form>
 </div>

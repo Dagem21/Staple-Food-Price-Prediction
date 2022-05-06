@@ -7,9 +7,13 @@
 <body>
 <header>
     <ul>
-        <li><img src="images/sfpps.png"></li>
+        <li><a href="/">{% load static %}<img src="{% static 'sfppApp/sfpps.png' %}"></a></li>
         <li><textarea></textarea></li>
+        {% if loggedIn %}
+        <li><button type="submit"><a href="/logout">Logout</a></button></li>
+        {% else %}
         <li><button type="submit"><a href="/login">Login</a></button></li>
+        {% endif %}
     </ul>
 </header>
 <table>
