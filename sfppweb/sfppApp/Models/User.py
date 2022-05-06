@@ -56,4 +56,5 @@ class User:
         return
 
     def notification(self, phone_number):
+
         return None
