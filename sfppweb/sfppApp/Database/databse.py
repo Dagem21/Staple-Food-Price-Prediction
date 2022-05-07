@@ -39,6 +39,7 @@ def getUser(phone_number):
             return user, None
         close(conn)
     except Exception as e:
+        print(e)
         return None, e
 
 
@@ -117,7 +118,7 @@ def getFoodPrice(food_name, location):
         price = {}
         for row in rows:
             price[row[1]] = row[3]
-        foodPrice = Food(food_name, location, price)
+        foodPrice = Food.Food(food_name, location, price)
         close(conn)
         return foodPrice, None
     except Exception as e:
@@ -215,7 +216,7 @@ def getData(location):
         rows = curr.fetchall()
         dataList = []
         for row in rows:
-            data = Data(row[1], row[2], row[3], row[4], row[5], row[6], row[0])
+            data = Data.Data(row[1], row[2], row[3], row[4], row[5], row[6], row[0])
             dataList.append(data)
         close(conn)
         return dataList, None
@@ -235,7 +236,7 @@ def getData(location, month):
         curr.execute(query, (location, month,))
         rows = curr.fetchall()
         for row in rows:
-            data = Data(row[1], row[2], row[3], row[4], row[5], row[6], row[0])
+            data = Data.Data(row[1], row[2], row[3], row[4], row[5], row[6], row[0])
             close(conn)
             return data, None
     except Exception as e:
@@ -277,7 +278,8 @@ def getPredictions():
         rows = curr.fetchall()
         predictionsList = []
         for row in rows:
-            prediction = Predictions(row[1], row[2], row[3], [row[4], row[5], row[6], row[7], row[8], row[9]], row[10], row[0])
+            prediction = Predictions.Predictions(row[1], row[2], row[3],
+                                                 [row[4], row[5], row[6], row[7], row[8], row[9]], row[10], row[0])
             predictionsList.append(prediction)
         close(conn)
         return predictionsList, None
@@ -298,8 +300,9 @@ def getPrediction(food_name):
         rows = curr.fetchall()
         predictionsList = []
         for row in rows:
-            prediction = Predictions(row[1], row[2], row[3], [row[4], row[5], row[6], row[7], row[8], row[9]], row[10],
-                                     row[0])
+            prediction = Predictions.Predictions(row[1], row[2], row[3],
+                                                 [row[4], row[5], row[6], row[7], row[8], row[9]], row[10],
+                                                 row[0])
             predictionsList.append(prediction)
         close(conn)
         return predictionsList, None
@@ -313,18 +316,37 @@ def getPredictionLocation(location):
         if err is not None:
             return [], "An error occurred while processing Your request! Please try again."
         if location is None:
-            return [], "Food name must be provided!"
+            return [], "Location must be provided!"
         curr = conn.cursor()
-        query = "SELECT * FROM predictions WHERE location = %s;"
+        query = "SELECT * FROM predictions WHERE location = %s ORDER BY percent_change DESC;"
         curr.execute(query, (location,))
         rows = curr.fetchall()
         predictionsList = []
         for row in rows:
-            prediction = Predictions(row[1], row[2], row[3], [row[4], row[5], row[6], row[7], row[8], row[9]], row[10],
-                                     row[0])
+            prediction = Predictions.Predictions(row[1], row[2], row[3],
+                                                 [row[4], row[5], row[6], row[7], row[8], row[9]], row[10],
+                                                 row[0])
             predictionsList.append(prediction)
         close(conn)
         return predictionsList, None
+    except Exception as e:
+        return [], e
+
+
+def getLocations():
+    try:
+        conn, err = connect()
+        if err is not None:
+            return [], "An error occurred while processing Your request! Please try again."
+        curr = conn.cursor()
+        query = "SELECT distinct(location) from predictions;"
+        curr.execute(query, )
+        rows = curr.fetchall()
+        locations = []
+        for l in rows:
+            locations.append(l[0])
+        close(conn)
+        return locations, None
     except Exception as e:
         return [], e
 

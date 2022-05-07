@@ -32,8 +32,13 @@ class User:
             else:
                 return None, "Invalid credentials provided! Try again."
 
-    def get_name(self):
-        return self.username
+    def get_user(self):
+        user, err = databse.getUser(self.phone_number)
+        self.id = user.id
+        self.username = user.username
+        self.phone_number = user.phone_number
+        self.user_type = user.user_type
+        return
 
     def signup(self):
         password = self.hash_passowrd(self.password)

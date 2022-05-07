@@ -8,6 +8,7 @@ class Predictions:
     percentChange = None
     firstMonth = None
     predictions = []
+    curr_price = None
 
     def __init__(self, location, foodName, firstMonth, predictions, perChange, id=None):
         self.id = id
@@ -16,6 +17,7 @@ class Predictions:
         self.percentChange = perChange
         self.firstMonth = firstMonth
         self.predictions = predictions
+        self.curr_price = round(predictions[0] / perChange, 2)
 
     def search_food(self, foodName):
         res, err = databse.getPrediction(foodName)
@@ -23,7 +25,7 @@ class Predictions:
             return False
         return res
 
-    def view_predictions(self):
+    def view_predictions(self=None):
         res, err = databse.getPredictions()
         if err is not None:
             return None
@@ -40,3 +42,9 @@ class Predictions:
 
     def send_notification(self):
         return
+
+    def get_locations(self):
+        res, err = databse.getLocations()
+        if err is not None:
+            return []
+        return res

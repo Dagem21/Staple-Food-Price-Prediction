@@ -8,7 +8,6 @@
 <header>
     <ul>
         <li><a href="/">{% load static %}<img src="{% static 'sfppApp/sfpps.png' %}"></a></li>
-        <li><form action="/search"><input type="text" name="search" placeholder="Search"></form></li>
         {% if loggedIn %}
         {% if usertype == 1 %}
         <li><button type="submit"><a href="/recommendations">Recommendations</a></button></li>
@@ -26,45 +25,22 @@
     </ul>
 </header>
 <div>
-    {% if search %}
-    <h2><u>Search results</u></h2><br>
-    {% if month %}
-    <table>
-      <tr>
-          <th>Staple Food</th>
-          <th>Location</th>
-          <th>Current Price</th>
-          <th>{{month.0}}</th>
-          <th>{{month.1}}</th>
-          <th>{{month.2}}</th>
-          <th>{{month.3}}</th>
-          <th>{{month.4}}</th>
-          <th>{{month.5}}</th>
-          <th>Percent Change</th>
-      </tr>
-      {% if predictions %}
-      {% for prediction in predictions %}
-      <tr>
-          <td>{{ prediction.foodName }}</td>
-          <td>{{ prediction.location }}</td>
-          <td>{{ prediction.curr_price }}</td>
-          <td>{{ prediction.predictions.0 }}</td>
-          <td>{{ prediction.predictions.1 }}</td>
-          <td>{{ prediction.predictions.2 }}</td>
-          <td>{{ prediction.predictions.3 }}</td>
-          <td>{{ prediction.predictions.4 }}</td>
-          <td>{{ prediction.predictions.5 }}</td>
-          <td>{{ prediction.percentChange }}</td>
-      </tr>
-        {% endfor %}
+    <div>
+        <form action="/recommendations"><input type="text" name="location" placeholder="Search location"></form>
+        {% if locations %}
+        <ul>
+            {% for location in locations %}
+            <li><a href="/recommendations?location={{ location }}">{{ location }}</a></li>
+            {% endfor %}
+        </ul>
         {% endif %}
-    </table>
+    </div>
+    <h2><u>Recommendations</u></h2><br>
+    {% if error %}
+    <div>
+        <h2>{{ error }}</h2>
+    </div>
     {% else %}
-    <h2>No search results were found!</h2>
-    {% endif %}
-    {% else %}
-    <h2><u>Predictions</u></h2><br>
-    {% if month %}
     <table>
       <tr>
           <th>Staple Food</th>
@@ -97,7 +73,6 @@
         <td>No Data to show!</td>
         {% endif %}
     </table>
-    {% endif %}
     {% endif %}
 </div>
 </body>

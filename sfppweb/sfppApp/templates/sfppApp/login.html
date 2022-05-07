@@ -14,7 +14,9 @@
 <div>
     <h3>Login</h3>
     <form action="/login" method="post">
+        {% if error %}
         <label>Error: {{error}}</label>
+        {% endif %}
         {% csrf_token %}
         {{form}}
         <button type="submit">Login</button>
