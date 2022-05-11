@@ -9,14 +9,8 @@
     <ul>
         <li><a href="/">{% load static %}<img src="{% static 'sfppApp/sfpps.png' %}"></a></li>
         {% if loggedIn %}
-        {% if usertype == 1 %}
-        <li><button type="submit"><a href="/recommendations">Recommendations</a></button></li>
-        {% elif usertype == 2%}
-        <li><button type="submit"><a href="/notifications">Notifications</a></button></li>
-        {% elif usertype == 3 or usertype == 4%}
-        <li><button type="submit"><a href="/users">Users</a></button></li>
+        <li><button type="submit"><a href="/addAdmin">Add Admin</a></button></li>
         <li><button type="submit"><a href="/addData">Add Data</a></button></li>
-        {% endif %}
         <li><button type="submit"><a href="/setting">Setting</a></button></li>
         <li><button type="submit"><a href="/logout">Logout</a></button></li>
         {% else %}
@@ -24,10 +18,59 @@
         {% endif %}
     </ul>
 </header>
+<h2>Users</h2>
 <table>
-    <thead>
-
-    </thead>
+    <tr>
+        <th>ID</th>
+        <th>Phone Number</th>
+        <th>Username</th>
+        <th>User Type</th>
+        <th>Registered On</th>
+        <th>Delete Account</th>
+    </tr>
+    {% if users %}
+    {% for user in users %}
+    <tr>
+          <td>{{ user.id }}</td>
+          <td>{{ user.phone_number }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.user_type }}</td>
+          <td>{{ user.created_at }}</td>
+          <td><a href="/delete?uid={{user.id}}">Delete</a></td>
+      </tr>
+    {% endfor %}
+    {% else %}
+    <label>No users to display!</label>
+    {% endif %}
+</table>
+<h2>Admins</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Phone Number</th>
+        <th>Username</th>
+        <th>User Type</th>
+        <th>Registered On</th>
+        <th>Delete Account</th>
+    </tr>
+    {% if admins %}
+    {% for admin in admins %}
+    <tr>
+        <td>{{ admin.id }}</td>
+        <td>{{ admin.phone_number }}</td>
+        <td>{{ admin.username }}</td>
+        <td>{{ admin.user_type }}</td>
+        <td>{{ admin.created_at }}</td>
+        {% if admin.user_type != "Full Privilege" %}
+        <td><a href="/delete?uid={{user.id}}">Delete</a></td>
+        {% else %}
+        <td>Primary Admin</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+    {% else %}
+    <label>No Admins to display!</label>
+    {% endif %}
 </table>
 </body>
 </html>

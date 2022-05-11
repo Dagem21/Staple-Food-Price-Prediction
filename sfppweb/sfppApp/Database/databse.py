@@ -1,6 +1,6 @@
 from datetime import datetime
 import psycopg2
-from ..Models import User, Predictions, Data, Food
+from ..Models import User, Predictions, Data, Food, Notification
 
 
 def close(conn):
@@ -54,7 +54,7 @@ def getUsers():
         rows = curr.fetchall()
         usersList = []
         for row in rows:
-            user = User(row[0], row[1], row[2], row[3], row[4], row[5])
+            user = User.User(row[1], row[2], row[3], row[4], row[5], row[0])
             usersList.append(user)
         close(conn)
         return usersList, None
@@ -77,10 +77,62 @@ def addUser(phone_number, username, password, user_type):
             createdAt = now.strftime("%d/%m/%Y %H:%M:%S")
             curr.execute(query, (str(phone_number), str(username), str(password), int(user_type), createdAt,))
             conn.commit()
+            if user_type == 2:
+                user, error = getUser(phone_number)
+                query = "INSERT INTO usernotification (userid, notifications) VALUES ( %s, %s); "
+                curr.execute(query, (user.id, [],))
+                conn.commit()
         conn.close()
         return True, None
     except psycopg2.IntegrityError:
         return False, "This phone numbers is already registered."
+    except Exception as e:
+        return False, e
+
+
+def updateAccount(phone_number, password, usertype):
+    try:
+        conn, err = connect()
+        if err is not None:
+            return None, "An error occurred while processing Your request! Please try again."
+        curr = conn.cursor()
+        if phone_number is None or password is None or usertype is None:
+            return False, "All fields must be provided!"
+        else:
+            user, error = getUser(phone_number)
+            if user.user_type == 2 and user.user_type != usertype:
+                query = "DELETE FROM usernotification WHERE userid = %s;"
+                curr.execute(query, (int(user.id),))
+                conn.commit()
+            query = "UPDATE users SET password = %s, user_role = %s  WHERE phone_number = %s;"
+            curr.execute(query, (password, int(usertype), str(phone_number),))
+            if usertype == 2:
+                query = "INSERT INTO usernotification (userid, notifications) VALUES ( %s, %s); "
+                curr.execute(query, (user.id, [],))
+        conn.commit()
+        close(conn)
+        return True, None
+    except Exception as e:
+        return False, e
+
+
+def deleteAccount(id):
+    try:
+        conn, err = connect()
+        if err is not None:
+            return None, "An error occurred while processing Your request! Please try again."
+        curr = conn.cursor()
+        if id is None:
+            return False, "ID must be provided!"
+        else:
+            query = "DELETE FROM users WHERE id = %s;"
+            curr.execute(query, (int(id),))
+            conn.commit()
+            query = "DELETE FROM usernotification WHERE userid = %s;"
+            curr.execute(query, (int(id),))
+            conn.commit()
+        close(conn)
+        return True, None
     except Exception as e:
         return False, e
 
@@ -125,24 +177,6 @@ def getFoodPrice(food_name, location):
         return None, e
 
 
-def updatePassword(phone_number, password):
-    try:
-        conn, err = connect()
-        if err is not None:
-            return None, "An error occurred while processing Your request! Please try again."
-        curr = conn.cursor()
-        if phone_number is None or password is None:
-            return False, "All fields must be provided!"
-        else:
-            query = "UPDATE users SET password = %s WHERE phone_number = %s;"
-            curr.execute(query, (password, str(phone_number),))
-        conn.commit()
-        close(conn)
-        return True, None
-    except Exception as e:
-        return False, e
-
-
 def addWeatherData(location, month, value):
     try:
         conn, err = connect()
@@ -172,14 +206,14 @@ def addFuelData(month, location, fuel_type, value):
         if fuel_type is None or month is None or location is None or value is None:
             return False, "All fields must be provided!"
         else:
-            query = "INSERT INTO data (month , location, %s) VALUES ( %s, %s, %s) ON CONFLICT (month, " \
-                    "location) DO UPDATE SET %s = %s; "
-
-            curr.execute(query, (fuel_type, month, location, float(value), fuel_type, float(value),))
+            query = "INSERT INTO data (month , location, {0}) VALUES ( %s, %s, %s) ON CONFLICT (month, " \
+                    "location) DO UPDATE SET {0}= %s; ".format(fuel_type)
+            curr.execute(query, (month, location, float(value), float(value),))
             conn.commit()
         conn.close()
         return True, None
     except Exception as e:
+        print(e)
         return False, e
 
 
@@ -349,6 +383,138 @@ def getLocations():
         return locations, None
     except Exception as e:
         return [], e
+
+
+def getFoodNames():
+    try:
+        conn, err = connect()
+        if err is not None:
+            return [], "An error occurred while processing Your request! Please try again."
+        curr = conn.cursor()
+        query = "SELECT distinct(food) from foodprice;"
+        curr.execute(query, )
+        rows = curr.fetchall()
+        foodnames = []
+        for l in rows:
+            foodnames.append(l[0])
+        close(conn)
+        return foodnames, None
+    except Exception as e:
+        return [], e
+
+
+def getUserNotifications(uid):
+    try:
+        conn, err = connect()
+        if err is not None:
+            return [], "An error occurred while processing Your request! Please try again."
+        if uid is None:
+            return [], "User ID must be provided!"
+        curr = conn.cursor()
+        query = "SELECT * FROM usernotification WHERE userid = %s;"
+        curr.execute(query, (uid,))
+        rows = curr.fetchall()
+        if not rows:
+            return [], None
+        for row in rows:
+            close(conn)
+            return row[2], None
+    except Exception as e:
+        return [], e
+
+
+def removeNotification(uid, notification_id):
+    try:
+        conn, err = connect()
+        if err is not None:
+            return False, "An error occurred while processing Your request! Please try again."
+        if uid is None or notification_id is None:
+            return False, "All fields must be provided!"
+        curr = conn.cursor()
+        query = "SELECT * FROM usernotification WHERE userid = %s;"
+        curr.execute(query, (uid,))
+        rows = curr.fetchall()
+        if not rows:
+            return False, None
+        for row in rows:
+            notifications = row[2]
+            notifications.remove(notification_id)
+            query = "UPDATE usernotification SET notifications = %s WHERE userid = %s;"
+            curr.execute(query, (notifications, uid,))
+            close(conn)
+    except Exception as e:
+        return [], e
+
+
+def get_notification(ids):
+    try:
+        conn, err = connect()
+        if err is not None:
+            return None, "An error occurred while processing Your request! Please try again."
+        curr = conn.cursor()
+        notifications = []
+        query = "SELECT * FROM notifications WHERE id IN (%s);"
+        curr.execute(query, (str(ids).replace('[', '').replace(']', ''),))
+        rows = curr.fetchall()
+        if len(rows) == 0:
+            return None, "Notification not found!"
+        for row in rows:
+            notification = Notification(row[1], row[2], row[3], [row[4], row[5], row[6], row[7], row[8], row[9]],
+                                        row[10], row[0])
+            notifications.append(notification)
+        close(conn)
+        return notifications, None
+    except Exception as e:
+        print(e)
+        return None, e
+
+
+def send_notification(notification_id):
+    try:
+        conn, err = connect()
+        if err is not None:
+            return False, "An error occurred while processing Your request! Please try again."
+        if notification_id is None:
+            return False, "Notification ID must be provided!"
+        curr = conn.cursor()
+        query = "SELECT * FROM usernotification;"
+        curr.execute(query,)
+        rows = curr.fetchall()
+        if not rows:
+            return False, None
+        for row in rows:
+            notifications = row[2]
+            notifications.append(notification_id)
+            query = "UPDATE usernotification SET notifications = %s WHERE userid = %s;"
+            curr.execute(query, (notifications, row[1],))
+            close(conn)
+    except Exception as e:
+        return [], e
+
+
+def add_notification(food_name, location, start_month, m1, m2, m3, m4, m5, m6):
+    try:
+        conn, err = connect()
+        if err is not None:
+            return False, "An error occurred while processing Your request! Please try again."
+        curr = conn.cursor()
+        if location is None or food_name is None or start_month is None or m1 is None or m2 is None or m3 is None \
+                or m4 is None or m5 is None or m6 is None:
+            return False, "All fields must be provided!"
+        else:
+            query = "INSERT INTO notifications (location, food, start_month, m1_price, m2_price, m3_price, m4_price," \
+                    " m5_price, m6_price, update_date) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT " \
+                    "(location, food) DO UPDATE SET start_month = %s, m1_price = %s, m2_price = %s, m3_price = %s," \
+                    " m4_price = %s, m5_price = %s, m6_price = %s, update_date = %s; "
+            now = datetime.now()
+            update_date = now.strftime("%d/%m/%Y %H:%M:%S")
+            curr.execute(query, (location, food_name, start_month, m1, m2, m3, m4, m5, m6, update_date, start_month,
+                                 m1, m2, m3, m4, m5, m6, update_date,))
+            conn.commit()
+        conn.close()
+        return True, None
+    except Exception as e:
+        return False, e
 
 
 if __name__ == '__main__':

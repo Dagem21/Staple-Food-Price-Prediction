@@ -7,7 +7,7 @@ from ..Models import User, Predictions
 
 def welcome(request):
     loggedIn = False
-    predictions = Predictions.Predictions.view_predictions()
+    predictions = Predictions.view_predictions()
     first_month = predictions[0].firstMonth
     month = get_months(first_month)
     try:

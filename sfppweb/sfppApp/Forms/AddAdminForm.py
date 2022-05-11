@@ -1,18 +1,18 @@
 from django import forms
 
 
-userType = [
-    ('Farmer', 'Farmer'),
-    ('Economist', 'Economist'),
+adminType = [
+    ('Limited Privileges', 'Limited Privileges'),
+    ('Full Privileges', 'Full Privileges'),
 ]
 
 
-class RegistrationForm(forms.Form):
+class AddAdminForm(forms.Form):
     phone_number = forms.IntegerField(label="Phone Number")
     username = forms.CharField(max_length=100, label="Username")
     password = forms.CharField(widget=forms.PasswordInput(), max_length=100, label="Password")
     confpass = forms.CharField(widget=forms.PasswordInput(), max_length=100, label="Confirm Password")
-    user_type = forms.CharField(label='Account type', widget=forms.RadioSelect(choices=userType))
+    admin_privileges = forms.CharField(label='Account type', widget=forms.RadioSelect(choices=adminType))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -20,7 +20,6 @@ class RegistrationForm(forms.Form):
         username = cleaned_data.get("username")
         password = cleaned_data.get("password")
         confpass = cleaned_data.get("confpass")
-        usertype = cleaned_data.get("user_type")
 
         if len(str(phone_number)) != 9 or str(phone_number)[0] != '9':
             err = "Please provide a valid phone number!"

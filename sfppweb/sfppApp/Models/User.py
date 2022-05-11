@@ -1,4 +1,6 @@
 import hashlib
+
+from ..Models.Notification import Notification
 from ..Database import databse
 
 
@@ -27,7 +29,10 @@ class User:
         if err is not None:
             return None, "Invalid credentials provided! Try again."
         else:
-            if user.password == self.hash_passowrd(self.password):
+            self.password = self.hash_passowrd(self.password)
+            if user.password == self.password:
+                self.username = user.username
+                self.user_type = user.user_type
                 return user, None
             else:
                 return None, "Invalid credentials provided! Try again."
@@ -37,8 +42,15 @@ class User:
         self.id = user.id
         self.username = user.username
         self.phone_number = user.phone_number
+        self.password = user.password
         self.user_type = user.user_type
         return
+
+    def get_users(self):
+        if self.user_type != 4:
+            return [], "You are not authorized to accesses this page!"
+        user, err = databse.getUsers()
+        return user, err
 
     def signup(self):
         password = self.hash_passowrd(self.password)
@@ -47,12 +59,18 @@ class User:
             return False, err
         return True, None
 
-    def change_password(self, phone_number, password):
-        res, err = databse.updatePassword(phone_number, password)
+    def update_account(self, password):
+        self.password = self.password if password is None else self.hash_passowrd(password)
+        res, err = databse.updateAccount(self.phone_number, self.password, self.user_type)
         if err is not None:
             return False
-        self.password = password
         return True
+
+    def delete_account(self, id):
+        res, err = databse.deleteAccount(id)
+        if res:
+            return True
+        return False
 
     def logout(self):
         self.username = None
@@ -60,6 +78,15 @@ class User:
         self.password = None
         return
 
-    def notification(self, phone_number):
+    def notifications(self):
+        notifications, err = databse.getUserNotifications(self.id)
+        if err is not None:
+            return []
+        notificationList = Notification.get_notification(ids=notifications)
+        return notificationList
 
-        return None
+    def deleteNotification(self, notification_id):
+        res, err = databse.removeNotification(self.id, notification_id)
+        if err is not None:
+            return False
+        return True

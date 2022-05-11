@@ -13,9 +13,9 @@
         <li><button type="submit"><a href="/recommendations">Recommendations</a></button></li>
         {% elif usertype == 2%}
         <li><button type="submit"><a href="/notifications">Notifications</a></button></li>
-        {% elif usertype == 3 or usertype == 4%}
+        {% elif usertype == 4%}
         <li><button type="submit"><a href="/users">Users</a></button></li>
-        <li><button type="submit"><a href="/addData">Add Data</a></button></li>
+        <li><button type="submit"><a href="/addAdmin">Add Admin</a></button></li>
         {% endif %}
         <li><button type="submit"><a href="/setting">Setting</a></button></li>
         <li><button type="submit"><a href="/logout">Logout</a></button></li>
@@ -24,10 +24,17 @@
         {% endif %}
     </ul>
 </header>
-<table>
-    <thead>
-
-    </thead>
-</table>
+<div>
+    <h3>Add Data</h3>
+    <form action="/addData" method="post">
+        {% if error %}
+        <label>Error: {{error}}</label>
+        {% endif %}
+        {% csrf_token %}
+        {{form}}
+        <br>
+        <button type="submit">Save record</button>
+    </form>
+</div>
 </body>
 </html>

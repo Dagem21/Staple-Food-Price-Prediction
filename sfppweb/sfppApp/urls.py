@@ -9,5 +9,9 @@ urlpatterns = [
     path('recommendations', views.recommendations),
     path('notifications', views.notifications),
     path('setting', views.setting),
-    path('search', views.search)
+    path('search', views.search),
+    path('addAdmin', views.addAdmin),
+    path('addData', views.addData),
+    path('users', views.users),
+    path('delete', views.delete)
 ]

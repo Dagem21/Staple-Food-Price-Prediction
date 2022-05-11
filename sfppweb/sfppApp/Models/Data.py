@@ -10,7 +10,7 @@ class Data:
     petrolPrice = None
     exRate = None
 
-    def __init__(self, month, location, precipitation, diesel, petrol, exrate, id=None):
+    def __init__(self, month, location, precipitation=None, diesel=None, petrol=None, exrate=None, id=None):
         self.id = id
         self.month = month
         self.location = location
@@ -19,20 +19,20 @@ class Data:
         self.petrolPrice = petrol
         self.exRate = exrate
 
-    def add_weather_data(self, month, location, value):
-        res, err = databse.addWeatherData(location, month, value)
+    def add_weather_data(self, value):
+        res, err = databse.addWeatherData(self.location, self.month, value)
         if err is not None:
             return False
         return True
 
-    def add_fuel_data(self, month, location, fuel_type, value):
-        res, err = databse.addFuelData(month, location, fuel_type, value)
+    def add_fuel_data(self, fuel_type, value):
+        res, err = databse.addFuelData(self.month, self.location, fuel_type, value)
         if err is not None:
             return False
         return True
 
-    def add_exchange_rate(self, month, location, value):
-        res, err = databse.addExchangeRateData(month, location, value)
+    def add_exchange_rate(self, value):
+        res, err = databse.addExchangeRateData(self.month, self.location, value)
         if err is not None:
             return False
         return True

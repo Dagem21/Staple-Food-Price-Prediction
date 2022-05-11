@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from ..Models import User
+from ..Models import User, Notification
 
 
 def notifications(request):
@@ -12,4 +12,10 @@ def notifications(request):
         return render(request, 'sfppApp/notifications.html', {'loggedIn': loggedIn})
     except KeyError as e:
         pass
-    return render(request, 'sfppApp/notifications.html', {'loggedIn': loggedIn})
+    finally:
+        if not loggedIn:
+            return redirect('/login')
+        if user.user_type != 2:
+            return redirect('/')
+        notifications = user.notifications()
+        return render(request, 'sfppApp/notifications.html', {'loggedIn': loggedIn, 'notifications': notifications})

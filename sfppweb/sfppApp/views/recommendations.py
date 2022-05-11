@@ -16,7 +16,9 @@ def recommendations(request):
     finally:
         if not loggedIn:
             return redirect('/login')
-        locations = Predictions.Predictions.get_locations(None)
+        if user.user_type != 1:
+            return redirect('/')
+        locations = Predictions.get_locations(None)
         location = request.GET.get('location')
         if location is not None:
             print(location)
@@ -29,7 +31,7 @@ def recommendations(request):
                                'locations': locations,
                                'error': err})
             else:
-                predictions = Predictions.Predictions.view_recommendations(None, location)
+                predictions = Predictions.view_recommendations(None, location)
                 if len(predictions) == 0:
                     err = "Unknown location. Try again with a different location!"
                     return render(request, 'sfppApp/recommendations.html',
@@ -57,8 +59,8 @@ def recommendations(request):
 
 def get_months(first_month):
     months = [first_month.strftime('%B, %Y'), (first_month + relativedelta(months=1)).strftime('%B, %Y'),
-             (first_month + relativedelta(months=2)).strftime('%B, %Y'),
-             (first_month + relativedelta(months=3)).strftime('%B, %Y'),
-             (first_month + relativedelta(months=4)).strftime('%B, %Y'),
-             (first_month + relativedelta(months=5)).strftime('%B, %Y')]
+              (first_month + relativedelta(months=2)).strftime('%B, %Y'),
+              (first_month + relativedelta(months=3)).strftime('%B, %Y'),
+              (first_month + relativedelta(months=4)).strftime('%B, %Y'),
+              (first_month + relativedelta(months=5)).strftime('%B, %Y')]
     return months
