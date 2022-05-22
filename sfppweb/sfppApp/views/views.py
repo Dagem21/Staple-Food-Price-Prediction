@@ -7,20 +7,22 @@ from ..Models import User, Predictions
 
 def welcome(request):
     loggedIn = False
-    predictions = Predictions.view_predictions()
-    first_month = predictions[0].firstMonth
-    month = get_months(first_month)
     try:
+        predictions = Predictions.view_predictions()
+        first_month = predictions[0].firstMonth
+        month = get_months(first_month)
         phone = request.session['phone']
         loggedIn = True
         user = User(phone, None, None, None)
         user.get_user()
         return render(request, 'sfppApp/predictions.html',
                       {'loggedIn': loggedIn, 'search': False, 'month': month, 'predictions': predictions,
-                       'usertype': user.user_type})
+                       'usertype': user.user_type, 'num_notes': user.num_notifications})
     except KeyError as e:
         pass
-
+    except Exception as e:
+        return render(request, 'sfppApp/predictions.html',
+                      {'loggedIn': loggedIn, 'search': False})
     return render(request, 'sfppApp/predictions.html',
                   {'loggedIn': loggedIn, 'search': False, 'month': month, 'predictions': predictions})
 
@@ -28,10 +30,12 @@ def welcome(request):
 def search(request):
     loggedIn = False
     try:
+        user_type = None
         phone = request.session['phone']
         loggedIn = True
         user = User(phone, None, None, None)
         user.get_user()
+        user_type = user.user_type
     except KeyError as e:
         pass
     finally:
@@ -40,16 +44,16 @@ def search(request):
         if any((c in chars) for c in query):
             predictions = []
         else:
-            predictions = Predictions.Predictions.search_food(None, query)
+            predictions = Predictions.search_food(None, query)
         if len(predictions) != 0:
             first_month = predictions[0].firstMonth
             month = get_months(first_month)
             return render(request, 'sfppApp/predictions.html',
                           {'loggedIn': loggedIn, 'search': True, 'month': month, 'predictions': predictions,
-                           'usertype': user.user_type})
+                           'usertype': user_type})
         else:
             return render(request, 'sfppApp/predictions.html',
-                          {'loggedIn': loggedIn, 'search': True, 'usertype': user.user_type})
+                          {'loggedIn': loggedIn, 'search': True, 'usertype': user_type})
 
 
 def get_months(first_month):
@@ -71,7 +75,6 @@ def login(request):
         auth_user, err = user.login()
         if err is None:
             request.session['phone'] = auth_user.phone_number
-            messages.success(request, "Login Successful!")
             return redirect('/')
     return render(request, 'sfppApp/login.html', {'form': form, 'error': err})
 

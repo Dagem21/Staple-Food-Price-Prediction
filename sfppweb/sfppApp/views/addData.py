@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-
+from django.contrib import messages
 from ..Forms.AddDataForm import AddDataForm
 from ..Models import User, Data, Food
 
@@ -19,6 +19,7 @@ def addData(request):
         if user.user_type != 3 and user.user_type != 4:
             return redirect('/')
         form = AddDataForm(request.POST or None)
+        err = None
         if request.method == 'POST' and form.is_valid():
             month = form.cleaned_data.get("month")
             location = form.cleaned_data.get("location")
@@ -30,14 +31,19 @@ def addData(request):
                 food = Food(dataItem, location)
                 res, err = food.add_price(month, value)
                 if res:
-                    message = "Data recorded!"
+                    messages.success(request, "Data recorded!")
                 else:
                     err = "Failed to record data.Try again!"
             else:
                 data = Data(month, location)
                 res = False
                 if dataType == "Weather Data":
-                    res = data.add_weather_data(value)
+                    if dataItem == 'Precipitation':
+                        res = data.add_precipitation_data(value)
+                    elif dataItem == 'Maximum Temperature':
+                        res = data.add_maxtemp_data(value)
+                    elif dataItem == 'Minimum Temperature':
+                        res = data.add_mintemp_data(value)
                 elif dataType == "Fuel Data":
                     if dataItem == 'Diesel Price':
                         res = data.add_fuel_data('diesel_price', value)
@@ -46,7 +52,9 @@ def addData(request):
                 elif dataType == "Exchange Rate Data":
                     res = data.add_exchange_rate(value)
                 if res:
-                    message = "Data recorded!"
+                    messages.success(request, "Data recorded!")
                 else:
                     err = "Failed to record data.Try again!"
-        return render(request, 'sfppApp/addData.html', {'loggedIn': loggedIn, 'form': form, 'usertype': user.user_type})
+
+        return render(request, 'sfppApp/addData.html', {'loggedIn': loggedIn, 'form': form, 'usertype': user.user_type,
+                                                        'error': err})

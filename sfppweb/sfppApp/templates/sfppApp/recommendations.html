@@ -3,61 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <title>Staple Food Price Predictions in Ethiopia</title>
+    {% load static %}<link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 <body>
-<header>
-    <a href="/">{% load static %}<img src="{% static 'sfppApp/sfpps.png' %}"></a>
-</header>
-<div>
-    <div>
-        <form action="/recommendations"><input type="text" name="location" placeholder="Search location"></form>
-        {% if locations %}
-        <ul>
-            {% for location in locations %}
-            <li><a href="/recommendations?location={{ location }}">{{ location }}</a></li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+<div class="d-grid gap-3">
+    <div class="container">
+        <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <div>
+                    <a class="navbar-brand" href="/">{% load static %}<img src="{% static 'sfppApp/sfpps.png' %}"></a>
+                </div>
+                <div>
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/setting">Setting</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <br>
+        <div class="container">
+            <h2 class="text-center">Recommendations</h2><br>
+            <br>
+            <div class="row">
+                <div class="col-3">
+                    <form action="/recommendations">
+                        <input data-cy="search" id="search" class="form-control" type="text" name="location" placeholder="Search location" required>
+                    </form>
+                    {% if locations %}
+                    <div class="list-group">
+                        {% for location in locations %}
+                        {% if chosenLocation %}
+                        <a class="list-group-item list-group-item-action active" aria-current="true" href="/recommendations?location={{ location }}">
+                            {{ location }}
+                        </a>
+                        {% else %}
+                        <a class="list-group-item list-group-item-action" href="/recommendations?location={{ location }}">
+                            {{ location }}
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-9">
+                    {% if error %}
+                    <div>
+                        <h2 data-cy="no-result" class="text-center">{{ error }}</h2>
+                    </div>
+                    {% else %}
+                    <table data-cy="table" class="table">
+                    <thead>
+                    <tr>
+                          <th scope="col">Staple Food</th>
+                          <th scope="col">Location</th>
+                          <th scope="col">Current Price</th>
+                          <th scope="col">{{month.0}}</th>
+                          <th scope="col">{{month.1}}</th>
+                          <th scope="col">{{month.2}}</th>
+                          <th scope="col">{{month.3}}</th>
+                          <th scope="col">{{month.4}}</th>
+                          <th scope="col">{{month.5}}</th>
+                          <th scope="col">Percent Change</th>
+                      </tr>
+                    </thead>
+                  {% if predictions %}
+                  {% for prediction in predictions %}
+                  <tr>
+                      <th scope="row">{{ prediction.foodName }}</th>
+                      <td data-cy="location">{{ prediction.location }}</td>
+                      <td>{{ prediction.curr_price }}</td>
+                      <td>{{ prediction.predictions.0 }}</td>
+                      <td>{{ prediction.predictions.1 }}</td>
+                      <td>{{ prediction.predictions.2 }}</td>
+                      <td>{{ prediction.predictions.3 }}</td>
+                      <td>{{ prediction.predictions.4 }}</td>
+                      <td>{{ prediction.predictions.5 }}</td>
+                      <td>{{ prediction.percentChange }}</td>
+                  </tr>
+                    {% endfor %}
+                    {% else %}
+                    <td>No Data to show!</td>
+                    {% endif %}
+                </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-    <h2><u>Recommendations</u></h2><br>
-    {% if error %}
-    <div>
-        <h2>{{ error }}</h2>
-    </div>
-    {% else %}
-    <table>
-      <tr>
-          <th>Staple Food</th>
-          <th>Location</th>
-          <th>Current Price</th>
-          <th>{{month.0}}</th>
-          <th>{{month.1}}</th>
-          <th>{{month.2}}</th>
-          <th>{{month.3}}</th>
-          <th>{{month.4}}</th>
-          <th>{{month.5}}</th>
-          <th>Percent Change</th>
-      </tr>
-      {% if predictions %}
-      {% for prediction in predictions %}
-      <tr>
-          <td>{{ prediction.foodName }}</td>
-          <td>{{ prediction.location }}</td>
-          <td>{{ prediction.curr_price }}</td>
-          <td>{{ prediction.predictions.0 }}</td>
-          <td>{{ prediction.predictions.1 }}</td>
-          <td>{{ prediction.predictions.2 }}</td>
-          <td>{{ prediction.predictions.3 }}</td>
-          <td>{{ prediction.predictions.4 }}</td>
-          <td>{{ prediction.predictions.5 }}</td>
-          <td>{{ prediction.percentChange }}</td>
-      </tr>
-        {% endfor %}
-        {% else %}
-        <td>No Data to show!</td>
-        {% endif %}
-    </table>
-    {% endif %}
 </div>
 </body>
 </html>

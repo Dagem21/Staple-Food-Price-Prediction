@@ -2,13 +2,6 @@ from ..Database import databse
 
 
 class Data:
-    id = None
-    month = None
-    location = None
-    precipitation = None
-    dieselPrice = None
-    petrolPrice = None
-    exRate = None
 
     def __init__(self, month, location, precipitation=None, diesel=None, petrol=None, exrate=None, id=None):
         self.id = id
@@ -19,8 +12,20 @@ class Data:
         self.petrolPrice = petrol
         self.exRate = exrate
 
-    def add_weather_data(self, value):
-        res, err = databse.addWeatherData(self.location, self.month, value)
+    def add_precipitation_data(self, value):
+        res, err = databse.addPrecipitationData(self.location, self.month, value)
+        if err is not None:
+            return False
+        return True
+
+    def add_mintemp_data(self, value):
+        res, err = databse.addMaxTempData(self.location, self.month, value)
+        if err is not None:
+            return False
+        return True
+
+    def add_maxtemp_data(self, value):
+        res, err = databse.addMinTempData(self.location, self.month, value)
         if err is not None:
             return False
         return True
@@ -48,3 +53,4 @@ class Data:
         if err is not None:
             return None
         return res
+

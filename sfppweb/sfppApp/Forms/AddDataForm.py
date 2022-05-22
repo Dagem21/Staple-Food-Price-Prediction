@@ -7,12 +7,14 @@ class DateInput(forms.DateInput):
 
 
 dataTypes = [
-    ('Food Price', 'Food Price'),
     ('Weather Data', 'Weather Data'),
+    ('Food Price', 'Food Price'),
     ('Fuel Data', 'Fuel Data'),
     ('Exchange Rate Data', 'Exchange Rate Data')]
 dataItems = [
     ('Precipitation', 'Precipitation'),
+    ('Maximum Temperature', 'Maximum Temperature'),
+    ('Minimum Temperature', 'Minimum Temperature'),
     ('Diesel Price', 'Diesel Price'),
     ('Petrol Price', 'Petrol Price'),
     ('Exchange Rate', 'Exchange Rate')]
@@ -31,22 +33,52 @@ class AddDataForm(forms.Form):
         option = (location, location)
         locationsList.append(option)
     month = forms.DateField(
-        widget=DateInput()
+        widget=DateInput(
+            attrs={
+                'class': "form-control",
+                'id': 'month',
+                'data-cy': 'month'
+            }
+        )
     )
     location = forms.CharField(
-        widget=forms.Select(choices=locationsList),
-        label="Location"
+        widget=forms.Select(
+            choices=locationsList,
+            attrs={
+                'class': "form-control",
+                'id': 'location',
+                'data-cy': 'location'
+            }
+        ),
     )
     dataType = forms.CharField(
-        widget=forms.Select(choices=dataTypes),
-        label="Type of Data",
+        widget=forms.Select(
+            choices=dataTypes,
+            attrs={
+                'class': "form-control",
+                'id': 'datatype',
+                'data-cy': 'datatype'
+            }
+        ),
     )
     dataItem = forms.CharField(
-        widget=forms.Select(choices=combined),
-        label="Data Item"
+        widget=forms.Select(
+            choices=combined,
+            attrs={
+                'class': "form-control",
+                'id': 'dataitem',
+                'data-cy': 'dataitem'
+            }
+        ),
     )
     value = forms.DecimalField(
-        label="Value"
+        widget=forms.NumberInput(
+            attrs={
+                'class': "form-control",
+                'id': "value",
+                'data-cy': 'value'
+            }
+        )
     )
 
     def clean(self):
@@ -58,30 +90,31 @@ class AddDataForm(forms.Form):
 
         chars = set(r'~!@#$%^&*()+=`?;:\|.<>[]{}/')
         if any((c in chars) for c in location):
-            err = "Special characters are not allowed in Location!"
-            raise forms.ValidationError(err)
+            err = "Special characters are not allowed in this field!"
+            raise forms.ValidationError({'location': err})
         else:
             if any((c in chars) for c in dataType):
-                err = "Special characters are not allowed in Type of Data!"
-                raise forms.ValidationError(err)
+                err = "Special characters are not allowed in this field!"
+                raise forms.ValidationError({'dataType': err})
             else:
                 if any((c in chars) for c in dataItem):
-                    err = "Special characters are not allowed in Data Item!"
-                    raise forms.ValidationError(err)
+                    err = "Special characters are not allowed in this field!"
+                    raise forms.ValidationError({'dataItem': err})
         if dataType == 'Weather Data':
-            if dataItem != 'Precipitation':
-                err = "Data item doesn't fit with the selected data type!"
-                raise forms.ValidationError(err)
+            if dataItem != 'Precipitation' and dataItem != 'Maximum Temperature' and dataItem != 'Minimum Temperature':
+                err = "Data item doesnt fit with the selected data type!"
+                raise forms.ValidationError({'dataItem': err})
         elif dataType == 'Fuel Data':
             if dataItem != 'Diesel Price' and dataItem != 'Petrol Price':
-                err = "Data item doesn't fit with the selected data type!"
-                raise forms.ValidationError(err)
+                err = "Data item doesnt fit with the selected data type!"
+                raise forms.ValidationError({'dataItem': err})
         elif dataType == 'Exchange Rate Data':
             if dataItem != 'Exchange Rate':
-                err = "Data item doesn't fit with the selected data type!"
-                raise forms.ValidationError(err)
-        else:
-            if dataItem == 'Precipitation' or dataItem != 'Diesel Price' or dataItem != 'Petrol Price' or dataItem != 'Exchange Rate':
-                err = "Data item doesn't fit with the selected data type!"
-                raise forms.ValidationError(err)
+                err = "Data item doesnt fit with the selected data type!"
+                raise forms.ValidationError({'dataItem': err})
+        elif dataType == 'Food Price':
+            if dataItem == 'Precipitation' or dataItem == 'Maximum Temperature' or dataItem == 'Minimum Temperature' \
+                    or dataItem == 'Diesel Price' or dataItem == 'Petrol Price' or dataItem == 'Exchange Rate':
+                err = "Data item doesnt fit with the selected data type!"
+                raise forms.ValidationError({'dataItem': err})
         return cleaned_data

@@ -3,10 +3,6 @@ from ..Database import databse
 
 class Food:
 
-    food_name = None
-    location = None
-    price = None
-
     def __init__(self, food_name, location, price=None):
         self.food_name = food_name
         self.location = location

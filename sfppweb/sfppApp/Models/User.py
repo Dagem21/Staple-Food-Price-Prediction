@@ -5,20 +5,15 @@ from ..Database import databse
 
 
 class User:
-    id = None
-    username = None
-    password = None
-    phone_number = None
-    user_type = None
-    created_at = None
 
-    def __init__(self, phone_number, username, password, userType, createdAt=None, uid=None):
+    def __init__(self, phone_number, username, password, userType, createdAt=None, uid=None, num_not=None):
         self.id = uid
         self.phone_number = phone_number
         self.username = username
         self.password = password
         self.user_type = userType
         self.created_at = createdAt
+        self.num_notifications = num_not
 
     def hash_passowrd(self, password):
         hashed_password = hashlib.sha512(password.encode('utf-8')).hexdigest()
@@ -33,6 +28,7 @@ class User:
             if user.password == self.password:
                 self.username = user.username
                 self.user_type = user.user_type
+                self.num_notifications = user.num_notifications
                 return user, None
             else:
                 return None, "Invalid credentials provided! Try again."
@@ -44,6 +40,7 @@ class User:
         self.phone_number = user.phone_number
         self.password = user.password
         self.user_type = user.user_type
+        self.num_notifications = user.num_notifications
         return
 
     def get_users(self):
@@ -88,5 +85,11 @@ class User:
     def deleteNotification(self, notification_id):
         res, err = databse.removeNotification(self.id, notification_id)
         if err is not None:
+            return False
+        return True
+
+    def registered(self):
+        res, err = databse.registered(self.phone_number)
+        if err is not None or not res:
             return False
         return True

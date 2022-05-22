@@ -13,5 +13,6 @@ urlpatterns = [
     path('addAdmin', views.addAdmin),
     path('addData', views.addData),
     path('users', views.users),
-    path('delete', views.delete)
+    path('delete', views.delete),
+    path('deleteNotification', views.deleteNotification)
 ]

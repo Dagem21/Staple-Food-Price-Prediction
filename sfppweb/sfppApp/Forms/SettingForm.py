@@ -9,11 +9,56 @@ userType = [
 
 
 class SettingForm(forms.Form):
-    phone_number = forms.IntegerField(label="Phone Number")
-    password = forms.CharField(widget=forms.PasswordInput(), max_length=100, label="Password")
-    newpass = forms.CharField(widget=forms.PasswordInput(), max_length=100, label="New Password", required=False)
-    confpass = forms.CharField(widget=forms.PasswordInput(), max_length=100, label="Confirm Password", required=False)
-    user_type = forms.CharField(label='Account type', widget=forms.RadioSelect(choices=userType))
+    phone_number = forms.IntegerField(
+        widget=forms.NumberInput(
+            attrs={
+                'class': "form-control",
+                'id': "phone-number"
+            }
+        )
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': "form-control",
+                'id': "oldpass",
+                'data-cy': 'old-password'
+            }
+        ),
+        max_length=100
+    )
+    newpass = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': "form-control",
+                'id': "newpass",
+                'data-cy': 'new-password'
+            }
+        ),
+        max_length=100
+        , required=False
+    )
+    confpass = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': "form-control",
+                'id': "confpass",
+                'data-cy': 'confirm-password'
+            }
+        ),
+        max_length=100,
+        required=False
+    )
+    user_type = forms.CharField(
+        widget=forms.Select(
+            choices=userType,
+            attrs={
+                'class': "form-select",
+                'id': 'usertype',
+                'data-cy': 'usertype'
+            }
+        )
+    )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -21,24 +66,35 @@ class SettingForm(forms.Form):
         password = cleaned_data.get("password")
         newpass = cleaned_data.get("newpass")
         confpass = cleaned_data.get("confpass")
+        userType = cleaned_data.get("user_type")
 
         user = User(phonenum, None, password, None)
         auth_user, err = user.login()
         if err is None:
             if len(newpass) != 0:
-                if len(confpass) != 0:
-                    if len(newpass) < 8:
-                        err = "Password length must be at least 8 characters long!"
-                        raise forms.ValidationError(err)
-                    else:
-                        if newpass != confpass:
-                            err = "Passwords do not match!"
-                            raise forms.ValidationError(err)
+                if newpass == password:
+                    err = "Your new password should be different from the old one!"
+                    raise forms.ValidationError({'newpass': err})
                 else:
-                    err = "Confirm your new password!"
-                    raise forms.ValidationError(err)
-
+                    if len(confpass) != 0:
+                        if len(newpass) < 8:
+                            err = "Password length must be at least 8 characters long!"
+                            raise forms.ValidationError({'newpass': err})
+                        else:
+                            if newpass != confpass:
+                                err = "Passwords do not match!"
+                                raise forms.ValidationError({'confpass': err})
+                    else:
+                        err = "Confirm your new password!"
+                        raise forms.ValidationError({'confpass': err})
+            else:
+                if userType == "Economist" and user.user_type == 2:
+                    err = "Please enter a new password!"
+                    raise forms.ValidationError({'newpass': err})
+                elif userType == "Farmer" and user.user_type == 1:
+                    err = "Please enter a new password!"
+                    raise forms.ValidationError({'newpass': err})
         else:
             err = "The password provided is incorrect!"
-            raise forms.ValidationError(err)
+            raise forms.ValidationError({'password': err})
         return cleaned_data

@@ -20,7 +20,7 @@ def addAdmin(request):
         if user.user_type != 4:
             error = "You don't have the appropriate authorization to access this page."
             return redirect('/')
-        form = AddAdminForm(request.POST or None, initial={"admin_privileges": 'Limited Privileges'})
+        form = AddAdminForm(request.POST or None)
 
         err = ''
         if request.method == 'POST' and form.is_valid():
@@ -29,11 +29,10 @@ def addAdmin(request):
             password = form.cleaned_data.get("password")
             selected = form.cleaned_data.get("admin_privileges")
             admin_privileges = 3
-            if selected == 'Full Privileges':
-                user_type = 4
+            if selected:
+                admin_privileges = 4
             user = User(phonenum, username, password, admin_privileges)
             res, err = user.signup()
             if res:
                 messages.success(request, "Admin registered successfully!")
-                return redirect('/')
         return render(request, 'sfppApp/addAdmin.html', {'loggedIn': loggedIn, 'form': form, 'error': err})

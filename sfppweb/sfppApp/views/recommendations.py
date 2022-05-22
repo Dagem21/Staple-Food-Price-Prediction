@@ -21,7 +21,6 @@ def recommendations(request):
         locations = Predictions.get_locations(None)
         location = request.GET.get('location')
         if location is not None:
-            print(location)
             chars = set(r'~!@#$%^&*()-+=`?;:\|.<>[]{}/')
             if any((c in chars) for c in location):
                 err = "Unknown location. Try again with a different location!"
@@ -48,7 +47,9 @@ def recommendations(request):
                                    'month': month,
                                    'predictions': predictions,
                                    'usertype': user.user_type,
-                                   'locations': locations})
+                                   'locations': locations,
+                                   'chosenLocation': location
+                                   })
         else:
             return render(request, 'sfppApp/recommendations.html',
                           {'loggedIn': loggedIn,

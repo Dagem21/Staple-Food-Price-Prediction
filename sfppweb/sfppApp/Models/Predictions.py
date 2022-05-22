@@ -2,13 +2,6 @@ from ..Database import databse
 
 
 class Predictions:
-    id = None
-    location = None
-    foodName = None
-    percentChange = None
-    firstMonth = None
-    predictions = []
-    curr_price = None
 
     def __init__(self, location, foodName, firstMonth, predictions, perChange, id=None):
         self.id = id

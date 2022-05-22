@@ -54,10 +54,13 @@ def delete(request):
             if deleteUserid is not None:
                 delete = True
                 res = user.delete_account(deleteUserid)
+                # TODO
                 if res:
-                    message = "Account deleted successfully"
+                    message = "Account deleted successfully."
+                    return redirect('/users')
                 else:
                     message = "Account deletion failed.Try Again!"
+                    return redirect('/users')
             users, err = user.get_users()
             usersList = []
             adminsList = []
