@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+    {% load static %}<link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+<body>
+<div class="d-grid gap-3">
+    <div class="container">
+        <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <div>
+                    <a class="navbar-brand" href="/">{% load static %}<img src="{% static 'sfppApp/sfpps.png' %}"></a>
+                </div>
+                <div>
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <section class="vh-100">
+            <div class="container-fluid h-custom">
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    <div class="col-md-9 col-lg-6 col-xl-5">
+                        {% load static %} <img src="{% static 'sfppApp/image1.png' %}"
+                             class="img-fluid" alt="Sample image">
+                    </div>
+                    <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                        <div>
+                            <h2 class="text-center">Sign up now</h2>
+                        </div>
+                        <form action="/register" method="post">
+                            {% csrf_token %}
+                            <div class="form-outline mb-4">
+                                <label class="form-label" for="phone-number">Phone Number</label>
+                                {{form.phone_number}}
+                                <div data-cy="phone-number-error" class="text-danger">
+                                    {{form.errors.phone_number}}
+                                </div>
+                            </div>
+                            <div class="form-outline mb-3">
+                                <label class="form-label" for="username">Username</label>
+                                {{form.username}}
+                                <div data-cy="username-error" class="text-danger">
+                                    {{form.errors.username}}
+                                </div>
+                            </div>
+                            <div class="form-outline mb-3">
+                                <label class="form-label" for="password">Password</label>
+                                {{form.password}}
+                                <div data-cy="password-error" class="text-danger">
+                                    {{form.errors.password}}
+                                </div>
+                            </div>
+                            <div class="form-outline mb-3">
+                                <label class="form-label" for="confpass">Confirm Password</label>
+                                {{form.confpass}}
+                                <div data-cy="confirm-password-error" class="text-danger">
+                                    {{form.errors.confpass}}
+                                </div>
+                            </div>
+                            <div class="form-outline mb-3">
+                                <label class="form-label" for="usertype">Account Type</label>
+                                <div>
+                                    {{form.user_type}}
+                                </div>
+                            </div>
+                            {% if error %}
+                            <label>Error: {{error}}</label>
+                            {% endif %}
+                            <div class="text-center text-lg-start mt-4 pt-2">
+                                <button data-cy="register" type="submit" class="btn btn-primary btn-lg"
+                                        style="padding-left: 2.5rem; padding-right: 2.5rem;">Register</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
