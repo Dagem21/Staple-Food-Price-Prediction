@@ -1,5 +1,4 @@
 class Fuel:
-
     fuel_type = None
     price = {}
 

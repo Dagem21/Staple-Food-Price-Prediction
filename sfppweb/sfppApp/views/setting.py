@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.shortcuts import render, redirect
+
 from ..Forms import SettingForm
 from ..Models import User
 

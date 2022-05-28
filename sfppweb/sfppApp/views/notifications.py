@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from ..Models import User, Notification
+
+from ..Models import User
 
 
 def notifications(request):

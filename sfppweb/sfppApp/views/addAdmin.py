@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.shortcuts import render, redirect
 
 from ..Forms.AddAdminForm import AddAdminForm
 from ..Models import User

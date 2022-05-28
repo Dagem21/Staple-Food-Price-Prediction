@@ -1,5 +1,7 @@
 from datetime import datetime
+
 import psycopg2
+
 from ..Models import User, Predictions, Data, Food, Notification
 
 
@@ -16,7 +18,6 @@ def connect():
             database="sfpp_db",
             user="postgres",
             password="postgres")
-
         return conn, None
 
     except (Exception, psycopg2.DatabaseError) as error:
@@ -547,8 +548,9 @@ def get_notification(ids=[]):
         if len(rows) == 0:
             return None, "Notification not found!"
         for row in rows:
-            notification = Notification.Notification(row[1], row[2], row[3], [row[4], row[5], row[6], row[7], row[8], row[9]],
-                                        row[10], row[11], row[0])
+            notification = Notification.Notification(row[1], row[2], row[3],
+                                                     [row[4], row[5], row[6], row[7], row[8], row[9]],
+                                                     row[10], row[11], row[0])
             notifications.append(notification)
         close(conn)
         return notifications, None
@@ -565,7 +567,7 @@ def send_notification(notification_id):
             return False, "Notification ID must be provided!"
         curr = conn.cursor()
         query = "SELECT * FROM usernotification;"
-        curr.execute(query,)
+        curr.execute(query, )
         rows = curr.fetchall()
         if not rows:
             return False, None
@@ -597,8 +599,9 @@ def add_notification(food_name, location, start_month, m1, m2, m3, m4, m5, m6, p
                     " = %s; "
             now = datetime.now()
             update_date = now.strftime("%d/%m/%Y %H:%M:%S")
-            curr.execute(query, (location, food_name, start_month, m1, m2, m3, m4, m5, m6, percent_change, update_date, start_month,
-                                 m1, m2, m3, m4, m5, m6, percent_change, update_date,))
+            curr.execute(query, (
+            location, food_name, start_month, m1, m2, m3, m4, m5, m6, percent_change, update_date, start_month,
+            m1, m2, m3, m4, m5, m6, percent_change, update_date,))
             conn.commit()
         conn.close()
         return True, None
@@ -608,4 +611,3 @@ def add_notification(food_name, location, start_month, m1, m2, m3, m4, m5, m6, p
 
 if __name__ == '__main__':
     print('database....')
-

@@ -1,5 +1,4 @@
 class ExchangeRate:
-
     rate = {}
 
     def get_exrate(self):

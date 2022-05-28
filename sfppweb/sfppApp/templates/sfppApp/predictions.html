@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Staple Food Price Predictions in Ethiopia</title>
-    {% load static %}<link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    {% load static %}<link href="{% static 'sfppApp/CSS/predictions.css' %}" rel="stylesheet">
+    {% load static %}
+    <link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    {% load static %}
+    <link href="{% static 'sfppApp/CSS/predictions.css' %}" rel="stylesheet">
 </head>
 <body>
 <div class="d-grid gap-3">
@@ -74,7 +77,8 @@
                     <div class="container-fluid">
                         <form class="d-flex" action="/search">
                             <div>
-                                <input data-cy="search" class="form-control" type="search" name="search" placeholder="Search" required>
+                                <input data-cy="search" class="form-control" type="search" name="search"
+                                       placeholder="Search" required>
                             </div>
                             <button data-cy="search-btn" class="btn btn-outline-success" type="submit">Search</button>
                         </form>
@@ -97,20 +101,20 @@
                         <th scope="col">Percent Change</th>
                     </tr>
                     </thead>
-                  {% if predictions %}
-                  {% for prediction in predictions %}
-                  <tr>
-                      <th data-cy="food-name" scope="row">{{ prediction.foodName }}</th>
-                      <td>{{ prediction.location }}</td>
-                      <td>{{ prediction.curr_price }}</td>
-                      <td>{{ prediction.predictions.0 }}</td>
-                      <td>{{ prediction.predictions.1 }}</td>
-                      <td>{{ prediction.predictions.2 }}</td>
-                      <td>{{ prediction.predictions.3 }}</td>
-                      <td>{{ prediction.predictions.4 }}</td>
-                      <td>{{ prediction.predictions.5 }}</td>
-                      <td>{{ prediction.percentChange }}</td>
-                  </tr>
+                    {% if predictions %}
+                    {% for prediction in predictions %}
+                    <tr>
+                        <th data-cy="food-name" scope="row">{{ prediction.foodName }}</th>
+                        <td>{{ prediction.location }}</td>
+                        <td>{{ prediction.curr_price }}</td>
+                        <td>{{ prediction.predictions.0 }}</td>
+                        <td>{{ prediction.predictions.1 }}</td>
+                        <td>{{ prediction.predictions.2 }}</td>
+                        <td>{{ prediction.predictions.3 }}</td>
+                        <td>{{ prediction.predictions.4 }}</td>
+                        <td>{{ prediction.predictions.5 }}</td>
+                        <td>{{ prediction.percentChange }}</td>
+                    </tr>
                     {% endfor %}
                     {% endif %}
                 </table>
@@ -119,13 +123,14 @@
                 {% endif %}
             </div>
             {% else %}
-            <div  class="p-2 border">
+            <div class="p-2 border">
                 <h2 class="text-center">Staple Food Price Predictions</h2><br>
                 <div class="form-align-right">
                     <div class="container-fluid">
                         <form class="d-flex" action="/search">
                             <div>
-                                <input data-cy="search" class="form-control" type="search" name="search" placeholder="Search" required>
+                                <input data-cy="search" class="form-control" type="search" name="search"
+                                       placeholder="Search" required>
                             </div>
                             <button data-cy="search-btn" class="btn btn-outline-success" type="submit">Search</button>
                         </form>
@@ -136,38 +141,38 @@
                 <table data-cy="table" class="table">
                     <thead>
                     <tr>
-                      <th scope="col">Staple Food</th>
-                      <th scope="col">Location</th>
-                      <th scope="col">Current Price</th>
-                      <th scope="col">{{month.0}}</th>
-                      <th scope="col">{{month.1}}</th>
-                      <th scope="col">{{month.2}}</th>
-                      <th scope="col">{{month.3}}</th>
-                      <th scope="col">{{month.4}}</th>
-                      <th scope="col">{{month.5}}</th>
-                      <th scope="col">Percent Change</th>
-                  </tr>
+                        <th scope="col">Staple Food</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Current Price</th>
+                        <th scope="col">{{month.0}}</th>
+                        <th scope="col">{{month.1}}</th>
+                        <th scope="col">{{month.2}}</th>
+                        <th scope="col">{{month.3}}</th>
+                        <th scope="col">{{month.4}}</th>
+                        <th scope="col">{{month.5}}</th>
+                        <th scope="col">Percent Change</th>
+                    </tr>
                     </thead>
                     {% if predictions %}
                     {% for prediction in predictions %}
                     <tr>
-                      <th data-cy="food-name" scope="row">{{ prediction.foodName }}</th>
-                      <td>{{ prediction.location }}</td>
-                      <td>{{ prediction.curr_price }}</td>
-                      <td>{{ prediction.predictions.0 }}</td>
-                      <td>{{ prediction.predictions.1 }}</td>
-                      <td>{{ prediction.predictions.2 }}</td>
-                      <td>{{ prediction.predictions.3 }}</td>
-                      <td>{{ prediction.predictions.4 }}</td>
-                      <td>{{ prediction.predictions.5 }}</td>
-                      <td>{{ prediction.percentChange }}</td>
-                  </tr>
+                        <th data-cy="food-name" scope="row">{{ prediction.foodName }}</th>
+                        <td>{{ prediction.location }}</td>
+                        <td>{{ prediction.curr_price }}</td>
+                        <td>{{ prediction.predictions.0 }}</td>
+                        <td>{{ prediction.predictions.1 }}</td>
+                        <td>{{ prediction.predictions.2 }}</td>
+                        <td>{{ prediction.predictions.3 }}</td>
+                        <td>{{ prediction.predictions.4 }}</td>
+                        <td>{{ prediction.predictions.5 }}</td>
+                        <td>{{ prediction.percentChange }}</td>
+                    </tr>
                     {% endfor %}
                     {% else %}
                     <td>No Data to show!</td>
                     {% endif %}
                 </table>
-            {% endif %}
+                {% endif %}
             </div>
             {% endif %}
         </div>

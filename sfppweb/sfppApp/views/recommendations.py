@@ -1,7 +1,10 @@
+import calendar
+from datetime import datetime
+
 from django.shortcuts import render, redirect
-from dateutil.relativedelta import relativedelta
-from ..Models import User
+
 from ..Models import Predictions
+from ..Models import User
 
 
 def recommendations(request):
@@ -58,10 +61,19 @@ def recommendations(request):
                            'usertype': user.user_type})
 
 
+def add_months(sourcedate, months):
+    month = sourcedate.month - 1 + months
+    year = sourcedate.year + month // 12
+    month = month % 12 + 1
+    day = min(sourcedate.day, calendar.monthrange(year, month)[1])
+    return datetime(year=year, month=month, day=day)
+
+
 def get_months(first_month):
-    months = [first_month.strftime('%B, %Y'), (first_month + relativedelta(months=1)).strftime('%B, %Y'),
-              (first_month + relativedelta(months=2)).strftime('%B, %Y'),
-              (first_month + relativedelta(months=3)).strftime('%B, %Y'),
-              (first_month + relativedelta(months=4)).strftime('%B, %Y'),
-              (first_month + relativedelta(months=5)).strftime('%B, %Y')]
+    months = [first_month.strftime('%B, %Y'),
+              (add_months(first_month, 1)).strftime('%B, %Y'),
+              (add_months(first_month, 2)).strftime('%B, %Y'),
+              (add_months(first_month, 3)).strftime('%B, %Y'),
+              (add_months(first_month, 4)).strftime('%B, %Y'),
+              (add_months(first_month, 5)).strftime('%B, %Y')]
     return months

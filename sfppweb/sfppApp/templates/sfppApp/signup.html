@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Signup</title>
-    {% load static %}<link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    {% load static %}
+    <link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 <body>
 <div class="d-grid gap-3">
@@ -28,7 +30,7 @@
                 <div class="row d-flex justify-content-center align-items-center h-100">
                     <div class="col-md-9 col-lg-6 col-xl-5">
                         {% load static %} <img src="{% static 'sfppApp/image1.png' %}"
-                             class="img-fluid" alt="Sample image">
+                                               class="img-fluid" alt="Sample image">
                     </div>
                     <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
                         <div>
@@ -75,7 +77,8 @@
                             {% endif %}
                             <div class="text-center text-lg-start mt-4 pt-2">
                                 <button data-cy="register" type="submit" class="btn btn-primary btn-lg"
-                                        style="padding-left: 2.5rem; padding-right: 2.5rem;">Register</button>
+                                        style="padding-left: 2.5rem; padding-right: 2.5rem;">Register
+                                </button>
                             </div>
                         </form>
                     </div>

@@ -31,6 +31,3 @@ class Notification:
         if err is not None:
             return []
         return res
-
-
-

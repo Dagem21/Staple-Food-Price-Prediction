@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.shortcuts import render, redirect
+
 from ..Forms.AddDataForm import AddDataForm
 from ..Models import User, Data, Food
 

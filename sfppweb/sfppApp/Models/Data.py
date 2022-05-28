@@ -53,4 +53,3 @@ class Data:
         if err is not None:
             return None
         return res
-

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+
 from ..Models import User
 
 
@@ -33,7 +34,9 @@ def users(request):
                     if u.user_type == 4:
                         u.user_type = 'Full Privilege'
                     adminsList.append(u)
-            return render(request, 'sfppApp/users.html', {'loggedIn': loggedIn, 'users': usersList, 'admins': adminsList})
+            return render(request, 'sfppApp/users.html',
+                          {'loggedIn': loggedIn, 'users': usersList, 'admins': adminsList})
+
 
 def delete(request):
     loggedIn = False

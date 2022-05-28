@@ -2,7 +2,6 @@ from ..Database import databse
 
 
 class Weather:
-
     location = None
     precipitation = {}
 

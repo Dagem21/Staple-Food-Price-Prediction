@@ -1,7 +1,7 @@
 import hashlib
 
-from ..Models.Notification import Notification
 from ..Database import databse
+from ..Models.Notification import Notification
 
 
 class User:

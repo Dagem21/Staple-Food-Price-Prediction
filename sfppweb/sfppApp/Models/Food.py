@@ -30,5 +30,3 @@ class Food:
     def add_price(self, month, price):
         res, err = databse.addFoodPrice(self.food_name, self.location, month, price)
         return res
-
-

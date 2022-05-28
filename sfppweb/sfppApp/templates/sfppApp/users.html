@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Staple Food Price Predictions in Ethiopia</title>
-    {% load static %}<link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    {% load static %}
+    <link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 <body>
 <div class="d-grid gap-3">
@@ -38,25 +40,26 @@
                 <br>
                 <table data-cy="usersTable" class="table">
                     <thead>
-                        <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Phone Number</th>
-                            <th scope="col">Username</th>
-                            <th scope="col">User Type</th>
-                            <th scope="col">Registered On</th>
-                            <th scope="col">Delete Account</th>
-                        </tr>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Phone Number</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">User Type</th>
+                        <th scope="col">Registered On</th>
+                        <th scope="col">Delete Account</th>
+                    </tr>
                     </thead>
                     {% if users %}
                     {% for user in users %}
                     <tr>
-                          <th  scope="row">{{ user.id }}</th>
-                          <td>{{ user.phone_number }}</td>
-                          <td>{{ user.username }}</td>
-                          <td>{{ user.user_type }}</td>
-                          <td>{{ user.created_at }}</td>
-                          <td><a data-cy="delete-{{user.id}}" class="btn btn-outline-danger btn-sm" href="/delete?uid={{user.id}}">Delete</a></td>
-                      </tr>
+                        <th scope="row">{{ user.id }}</th>
+                        <td>{{ user.phone_number }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.user_type }}</td>
+                        <td>{{ user.created_at }}</td>
+                        <td><a data-cy="delete-{{user.id}}" class="btn btn-outline-danger btn-sm"
+                               href="/delete?uid={{user.id}}">Delete</a></td>
+                    </tr>
                     {% endfor %}
                     {% else %}
                     <label>No users to display!</label>
@@ -69,29 +72,30 @@
                 <br>
                 <table data-cy="adminsTable" class="table">
                     <thead>
-                        <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Phone Number</th>
-                            <th scope="col">Username</th>
-                            <th scope="col">Admin Type</th>
-                            <th scope="col">Registered On</th>
-                            <th scope="col">Delete Account</th>
-                        </tr>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Phone Number</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Admin Type</th>
+                        <th scope="col">Registered On</th>
+                        <th scope="col">Delete Account</th>
+                    </tr>
                     </thead>
                     {% if admins %}
                     {% for admin in admins %}
                     <tr>
-                        <th  scope="row">{{ admin.id }}</th>
+                        <th scope="row">{{ admin.id }}</th>
                         <td>{{ admin.phone_number }}</td>
                         <td>{{ admin.username }}</td>
                         <td>{{ admin.user_type }}</td>
                         <td>{{ admin.created_at }}</td>
                         {% if admin.user_type != "Full Privilege" %}
-                        <td><a data-cy="delete-{{admin.id}}" class="btn btn-outline-danger btn-sm" href="/delete?uid={{admin.id}}">Delete</a></td>
+                        <td><a data-cy="delete-{{admin.id}}" class="btn btn-outline-danger btn-sm"
+                               href="/delete?uid={{admin.id}}">Delete</a></td>
                         {% else %}
                         <td>Primary Admin</td>
                         {% endif %}
-                      </tr>
+                    </tr>
                     {% endfor %}
                     {% else %}
                     <label>No Admins to display!</label>

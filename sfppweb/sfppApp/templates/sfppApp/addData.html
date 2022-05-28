@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Staple Food Price Predictions in Ethiopia</title>
-    {% load static %}<link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    {% load static %}
+    <link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 <body>
 <div class="d-grid gap-3">
@@ -92,7 +94,10 @@
                                     </symbol>
                                 </svg>
                                 <div class="alert alert-success d-flex align-items-center" role="alert">
-                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                         aria-label="Success:">
+                                        <use xlink:href="#check-circle-fill"/>
+                                    </svg>
                                     <div data-cy="message" class="messages">
                                         {% for message in messages %}
                                         {{ message }}
@@ -101,15 +106,19 @@
                                 </div>
                                 {% elif error %}
                                 <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                  <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
-                                  <div>
-                                      {{ error }}
-                                  </div>
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                         aria-label="Success:">
+                                        <use xlink:href="#check-circle-fill"/>
+                                    </svg>
+                                    <div>
+                                        {{ error }}
+                                    </div>
                                 </div>
                                 {% endif %}
                                 <div class="text-center text-lg-start mt-4 pt-2">
-                                <button data-cy="record" type="submit" class="btn btn-primary btn-lg"
-                                        style="padding-left: 2.5rem; padding-right: 2.5rem;">Save record</button>
+                                    <button data-cy="record" type="submit" class="btn btn-primary btn-lg"
+                                            style="padding-left: 2.5rem; padding-right: 2.5rem;">Save record
+                                    </button>
                                 </div>
                             </form>
                         </div>
