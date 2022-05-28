@@ -1,0 +1,7 @@
+.form-control {
+    display: inline-block !important;
+ }
+
+ .form-align-right {
+    float: right;
+ }

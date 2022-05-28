@@ -1,17 +1,80 @@
-from django.shortcuts import render, redirect
+import calendar
+from datetime import datetime
+
 from django.contrib import messages
+from django.shortcuts import render, redirect
+
 from ..Forms import RegistrationForm, LoginForm
-from ..Models import User
+from ..Models import User, Predictions
 
 
 def welcome(request):
     loggedIn = False
     try:
+        predictions = Predictions.view_predictions()
+        first_month = predictions[0].firstMonth
+        month = get_months(first_month)
         phone = request.session['phone']
         loggedIn = True
+        user = User(phone, None, None, None)
+        user.get_user()
+        return render(request, 'sfppApp/predictions.html',
+                      {'loggedIn': loggedIn, 'search': False, 'month': month, 'predictions': predictions,
+                       'usertype': user.user_type, 'num_notes': user.num_notifications})
     except KeyError as e:
         pass
-    return render(request, 'sfppApp/predictions.html', {'loggedIn': loggedIn})
+    except Exception as e:
+        return render(request, 'sfppApp/predictions.html',
+                      {'loggedIn': loggedIn, 'search': False})
+    return render(request, 'sfppApp/predictions.html',
+                  {'loggedIn': loggedIn, 'search': False, 'month': month, 'predictions': predictions})
+
+
+def search(request):
+    loggedIn = False
+    try:
+        user_type = None
+        phone = request.session['phone']
+        loggedIn = True
+        user = User(phone, None, None, None)
+        user.get_user()
+        user_type = user.user_type
+    except KeyError as e:
+        pass
+    finally:
+        query = request.GET.get('search')
+        chars = set(r'~!@#$%^&*()-+=`?;:\|.,<>[]{}/')
+        if any((c in chars) for c in query):
+            predictions = []
+        else:
+            predictions = Predictions.search_food(None, query)
+        if len(predictions) != 0:
+            first_month = predictions[0].firstMonth
+            month = get_months(first_month)
+            return render(request, 'sfppApp/predictions.html',
+                          {'loggedIn': loggedIn, 'search': True, 'month': month, 'predictions': predictions,
+                           'usertype': user_type})
+        else:
+            return render(request, 'sfppApp/predictions.html',
+                          {'loggedIn': loggedIn, 'search': True, 'usertype': user_type})
+
+
+def add_months(sourcedate, months):
+    month = sourcedate.month - 1 + months
+    year = sourcedate.year + month // 12
+    month = month % 12 + 1
+    day = min(sourcedate.day, calendar.monthrange(year, month)[1])
+    return datetime(year=year, month=month, day=day)
+
+
+def get_months(first_month):
+    months = [first_month.strftime('%B, %Y'),
+              (add_months(first_month, 1)).strftime('%B, %Y'),
+              (add_months(first_month, 2)).strftime('%B, %Y'),
+              (add_months(first_month, 3)).strftime('%B, %Y'),
+              (add_months(first_month, 4)).strftime('%B, %Y'),
+              (add_months(first_month, 5)).strftime('%B, %Y')]
+    return months
 
 
 def login(request):
@@ -24,7 +87,6 @@ def login(request):
         auth_user, err = user.login()
         if err is None:
             request.session['phone'] = auth_user.phone_number
-            messages.success(request, "Login Successful!")
             return redirect('/')
     return render(request, 'sfppApp/login.html', {'form': form, 'error': err})
 
@@ -54,4 +116,3 @@ def logout(request):
     if request.session['phone']:
         del request.session['phone']
     return redirect('/')
-

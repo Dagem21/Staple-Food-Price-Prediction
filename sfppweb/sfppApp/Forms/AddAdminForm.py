@@ -2,13 +2,13 @@ from django import forms
 
 from ..Models import User
 
-userType = [
-    ('Farmer', 'Farmer'),
-    ('Economist', 'Economist'),
+adminType = [
+    ('Limited Privileges', 'Limited Privileges'),
+    ('Full Privileges', 'Full Privileges'),
 ]
 
 
-class RegistrationForm(forms.Form):
+class AddAdminForm(forms.Form):
     phone_number = forms.IntegerField(
         widget=forms.NumberInput(
             attrs={
@@ -33,27 +33,26 @@ class RegistrationForm(forms.Form):
             attrs={
                 'class': "form-control",
                 'id': 'password',
-                'data-cy': 'password'
+                'data-cy': "password"
             }
         ),
-        max_length=100
-    )
+        max_length=100)
     confpass = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 'class': "form-control",
                 'id': 'confpass',
-                'data-cy': 'confirm-password'
+                'data-cy': "confirm-password"
             }
         ),
-        max_length=100)
-    user_type = forms.CharField(
-        widget=forms.Select(
-            choices=userType,
+        max_length=100,
+    )
+    admin_privileges = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(
             attrs={
-                'class': "form-select",
-                'id': 'usertype',
-                'data-cy': 'usertype'
+                'id': 'admpriv',
+                'data-cy': "admin-privilege"
             }
         )
     )
@@ -64,7 +63,7 @@ class RegistrationForm(forms.Form):
         username = cleaned_data.get("username")
         password = cleaned_data.get("password")
         confpass = cleaned_data.get("confpass")
-        usertype = cleaned_data.get("user_type")
+        admin_privileges = cleaned_data.get("admin_privileges")
 
         if len(str(phone_number)) != 9 or str(phone_number)[0] != '9':
             err = "Please provide a valid phone number!"
