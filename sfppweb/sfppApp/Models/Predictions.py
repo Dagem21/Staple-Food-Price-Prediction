@@ -30,8 +30,13 @@ class Predictions:
             return False
         return res
 
-    def predict_price(self):
-        return
+    def add_prediction(self):
+        res, err = databse.addPredictions(self.foodName, self.location, self.firstMonth, self.percentChange,
+                                          self.predictions[0], self.predictions[1], self.predictions[2],
+                                          self.predictions[3], self.predictions[4], self.predictions[5])
+        if err is not None:
+            return False
+        return True
 
     def send_notification(self):
         return

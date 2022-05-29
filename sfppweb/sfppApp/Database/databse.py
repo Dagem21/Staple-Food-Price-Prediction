@@ -214,10 +214,31 @@ def getFoodPrice(food_name, location):
         rows = curr.fetchall()
         price = {}
         for row in rows:
-            price[row[1]] = row[3]
+            price[row[1]] = row[4]
         foodPrice = Food.Food(food_name, location, price)
         close(conn)
         return foodPrice, None
+    except Exception as e:
+        return None, e
+
+
+def getFoodPriceMonth(food_name, location, month):
+    try:
+        conn, err = connect()
+        if err is not None:
+            return None, "An error occurred while processing Your request! Please try again."
+        if location is None or food_name is None or month is None:
+            return None, "All fields must be provided!"
+        curr = conn.cursor()
+        query = "SELECT * FROM foodprice WHERE food = %s AND location = %s AND month = %s;"
+        curr.execute(query, (food_name, location, month,))
+        rows = curr.fetchall()
+        for row in rows:
+            price = {row[1]: row[4]}
+            foodPrice = Food.Food(food_name, location, price)
+            close(conn)
+            return foodPrice, None
+        return None, None
     except Exception as e:
         return None, e
 
@@ -334,7 +355,7 @@ def getData(location):
         rows = curr.fetchall()
         dataList = []
         for row in rows:
-            data = Data.Data(row[1], row[2], row[3], row[4], row[5], row[6], row[0])
+            data = Data.Data(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[0])
             dataList.append(data)
         close(conn)
         return dataList, None
@@ -342,7 +363,7 @@ def getData(location):
         return [], e
 
 
-def getData(location, month):
+def getDataMonth(location, month):
     try:
         conn, err = connect()
         if err is not None:
@@ -354,7 +375,7 @@ def getData(location, month):
         curr.execute(query, (location, month,))
         rows = curr.fetchall()
         for row in rows:
-            data = Data.Data(row[1], row[2], row[3], row[4], row[5], row[6], row[0])
+            data = Data.Data(row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[0])
             close(conn)
             return data, None
     except Exception as e:
@@ -376,12 +397,16 @@ def addPredictions(food_name, location, start_month, percent_change, m1, m2, m3,
                     "(location, food) DO UPDATE SET start_month = %s, m1_price = %s, m2_price = %s, m3_price = %s," \
                     " m4_price = %s, m5_price = %s, m6_price = %s, percent_change = %s; "
 
-            curr.execute(query, (location, food_name, start_month, m1, m2, m3, m4, m5, m6, percent_change, start_month,
-                                 m1, m2, m3, m4, m5, m6, percent_change,))
+            curr.execute(query, (location, food_name, start_month, round(float(m1), 2), round(float(m2), 2),
+                                 round(float(m3), 2), round(float(m4), 2), round(float(m5), 2), round(float(m6), 2),
+                                 round(percent_change, 2), start_month, round(float(m1), 2), round(float(m2), 2),
+                                 round(float(m3), 2), round(float(m4), 2), round(float(m5), 2), round(float(m6), 2),
+                                 round(percent_change, 2),))
             conn.commit()
         conn.close()
         return True, None
     except Exception as e:
+        print(e)
         return False, e
 
 
