@@ -185,3 +185,4 @@ class Prediction:
     def addPrediction(self, prediction):
         res = prediction.add_prediction()
         return res
+
