@@ -1,1 +1,1 @@
-web: gunicorn sfppweb.wsgi
+web: gunicorn sfppweb/sfppweb.wsgi
