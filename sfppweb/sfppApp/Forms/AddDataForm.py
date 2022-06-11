@@ -1,5 +1,5 @@
+from datetime import datetime
 from django import forms
-
 from ..Database import databse
 
 
@@ -89,33 +89,39 @@ class AddDataForm(forms.Form):
         dataType = cleaned_data.get("dataType")
         dataItem = cleaned_data.get("dataItem")
 
-        chars = set(r'~!@#$%^&*()+=`?;:\|.<>[]{}/')
-        if any((c in chars) for c in location):
-            err = "Special characters are not allowed in this field!"
-            raise forms.ValidationError({'location': err})
+        now = datetime.now()
+        now = now.strftime("%Y-%m-%d")
+        if datetime.strptime(str(now), '%Y-%m-%d') < datetime.strptime(str(month), '%Y-%m-%d'):
+            err = "Please choose a valid date!"
+            raise forms.ValidationError({'month': err})
         else:
-            if any((c in chars) for c in dataType):
+            chars = set(r'~!@#$%^&*()+=`?;:\|.<>[]{}/')
+            if any((c in chars) for c in location):
                 err = "Special characters are not allowed in this field!"
-                raise forms.ValidationError({'dataType': err})
+                raise forms.ValidationError({'location': err})
             else:
-                if any((c in chars) for c in dataItem):
+                if any((c in chars) for c in dataType):
                     err = "Special characters are not allowed in this field!"
+                    raise forms.ValidationError({'dataType': err})
+                else:
+                    if any((c in chars) for c in dataItem):
+                        err = "Special characters are not allowed in this field!"
+                        raise forms.ValidationError({'dataItem': err})
+            if dataType == 'Weather Data':
+                if dataItem != 'Precipitation' and dataItem != 'Maximum Temperature' and dataItem != 'Minimum Temperature':
+                    err = "Data item doesnt fit with the selected data type!"
                     raise forms.ValidationError({'dataItem': err})
-        if dataType == 'Weather Data':
-            if dataItem != 'Precipitation' and dataItem != 'Maximum Temperature' and dataItem != 'Minimum Temperature':
-                err = "Data item doesnt fit with the selected data type!"
-                raise forms.ValidationError({'dataItem': err})
-        elif dataType == 'Fuel Data':
-            if dataItem != 'Diesel Price' and dataItem != 'Petrol Price':
-                err = "Data item doesnt fit with the selected data type!"
-                raise forms.ValidationError({'dataItem': err})
-        elif dataType == 'Exchange Rate Data':
-            if dataItem != 'Exchange Rate':
-                err = "Data item doesnt fit with the selected data type!"
-                raise forms.ValidationError({'dataItem': err})
-        elif dataType == 'Food Price':
-            if dataItem == 'Precipitation' or dataItem == 'Maximum Temperature' or dataItem == 'Minimum Temperature' \
-                    or dataItem == 'Diesel Price' or dataItem == 'Petrol Price' or dataItem == 'Exchange Rate':
-                err = "Data item doesnt fit with the selected data type!"
-                raise forms.ValidationError({'dataItem': err})
+            elif dataType == 'Fuel Data':
+                if dataItem != 'Diesel Price' and dataItem != 'Petrol Price':
+                    err = "Data item doesnt fit with the selected data type!"
+                    raise forms.ValidationError({'dataItem': err})
+            elif dataType == 'Exchange Rate Data':
+                if dataItem != 'Exchange Rate':
+                    err = "Data item doesnt fit with the selected data type!"
+                    raise forms.ValidationError({'dataItem': err})
+            elif dataType == 'Food Price':
+                if dataItem == 'Precipitation' or dataItem == 'Maximum Temperature' or dataItem == 'Minimum Temperature' \
+                        or dataItem == 'Diesel Price' or dataItem == 'Petrol Price' or dataItem == 'Exchange Rate':
+                    err = "Data item doesnt fit with the selected data type!"
+                    raise forms.ValidationError({'dataItem': err})
         return cleaned_data

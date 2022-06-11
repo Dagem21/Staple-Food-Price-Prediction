@@ -9,9 +9,9 @@ def addData(request):
     loggedIn = False
     try:
         phone = request.session['phone']
-        loggedIn = True
         user = User(phone, None, None, None)
         user.get_user()
+        loggedIn = True
     except KeyError as e:
         pass
     finally:

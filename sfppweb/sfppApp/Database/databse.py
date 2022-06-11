@@ -209,7 +209,7 @@ def getFoodPrice(food_name, location):
         if location is None or food_name is None:
             return None, "All fields must be provided!"
         curr = conn.cursor()
-        query = "SELECT * FROM foodprice WHERE food = %s AND location = %s;"
+        query = "SELECT * FROM foodprice WHERE food = %s AND location = %s ORDER BY month;"
         curr.execute(query, (food_name, location,))
         rows = curr.fetchall()
         price = {}
@@ -393,9 +393,9 @@ def addPredictions(food_name, location, start_month, percent_change, m1, m2, m3,
             return False, "All fields must be provided!"
         else:
             query = "INSERT INTO predictions (location, food, start_month, m1_price, m2_price, m3_price, m4_price," \
-                    " m5_price, m6_price, percent_change) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT " \
-                    "(location, food) DO UPDATE SET start_month = %s, m1_price = %s, m2_price = %s, m3_price = %s," \
-                    " m4_price = %s, m5_price = %s, m6_price = %s, percent_change = %s; "
+                    " m5_price, m6_price, percent_change) VALUES ( %s, UPPER(%s), %s, %s, %s, %s, %s, %s, %s, %s) ON " \
+                    "CONFLICT (location, food) DO UPDATE SET start_month = %s, m1_price = %s, m2_price = %s, m3_price" \
+                    "= %s, m4_price = %s, m5_price = %s, m6_price = %s, percent_change = %s; "
 
             curr.execute(query, (location, food_name, start_month, round(float(m1), 2), round(float(m2), 2),
                                  round(float(m3), 2), round(float(m4), 2), round(float(m5), 2), round(float(m6), 2),
@@ -438,8 +438,8 @@ def getPrediction(food_name):
         if food_name is None:
             return [], "Food name must be provided!"
         curr = conn.cursor()
-        query = "SELECT * FROM predictions WHERE food = %s;"
-        curr.execute(query, (food_name,))
+        query = "SELECT * FROM predictions WHERE food LIKE UPPER(%s);"
+        curr.execute(query, ('%' + food_name.upper() + '%',))
         rows = curr.fetchall()
         predictionsList = []
         for row in rows:
@@ -450,6 +450,7 @@ def getPrediction(food_name):
         close(conn)
         return predictionsList, None
     except Exception as e:
+        print(e)
         return [], e
 
 
@@ -508,6 +509,24 @@ def getFoodNames():
             foodnames.append(l[0])
         close(conn)
         return foodnames, None
+    except Exception as e:
+        return [], e
+
+
+def getNamesAndLocations():
+    try:
+        conn, err = connect()
+        if err is not None:
+            return [], "An error occurred while processing Your request! Please try again."
+        curr = conn.cursor()
+        query = "SELECT distinct location, food from foodprice;"
+        curr.execute(query, )
+        rows = curr.fetchall()
+        items = []
+        for row in rows:
+            items.append([row[1], row[0]])
+        close(conn)
+        return items, None
     except Exception as e:
         return [], e
 
@@ -611,27 +630,28 @@ def add_notification(food_name, location, start_month, m1, m2, m3, m4, m5, m6, p
     try:
         conn, err = connect()
         if err is not None:
-            return False, "An error occurred while processing Your request! Please try again."
+            return None, "An error occurred while processing Your request! Please try again."
         curr = conn.cursor()
         if location is None or food_name is None or start_month is None or m1 is None or m2 is None or m3 is None \
                 or m4 is None or m5 is None or m6 is None or percent_change is None:
-            return False, "All fields must be provided!"
+            return None, "All fields must be provided!"
         else:
             query = "INSERT INTO notifications (location, food, start_month, m1_price, m2_price, m3_price, m4_price," \
                     " m5_price, m6_price, percent_change, update_date) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s," \
                     " %s, %s) ON CONFLICT (location, food) DO UPDATE SET start_month = %s, m1_price = %s, m2_price =" \
                     " %s, m3_price = %s, m4_price = %s, m5_price = %s, m6_price = %s, percent_change = %s, update_date" \
-                    " = %s; "
+                    " = %s; RETURNING id"
             now = datetime.now()
             update_date = now.strftime("%d/%m/%Y %H:%M:%S")
             curr.execute(query, (
-            location, food_name, start_month, m1, m2, m3, m4, m5, m6, percent_change, update_date, start_month,
-            m1, m2, m3, m4, m5, m6, percent_change, update_date,))
+                location, food_name, start_month, m1, m2, m3, m4, m5, m6, percent_change, update_date, start_month,
+                m1, m2, m3, m4, m5, m6, percent_change, update_date,))
+            id_of_new_row = curr.fetchone()[0]
             conn.commit()
         conn.close()
-        return True, None
+        return id_of_new_row, None
     except Exception as e:
-        return False, e
+        return None, e
 
 
 if __name__ == '__main__':

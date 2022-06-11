@@ -36,7 +36,8 @@ class AddAdminForm(forms.Form):
                 'data-cy': "password"
             }
         ),
-        max_length=100)
+        max_length=100
+    )
     confpass = forms.CharField(
         widget=forms.PasswordInput(
             attrs={

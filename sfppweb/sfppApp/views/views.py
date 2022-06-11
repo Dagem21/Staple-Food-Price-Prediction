@@ -1,4 +1,6 @@
 import calendar
+import threading
+import time
 from datetime import datetime
 
 from django.contrib import messages
@@ -6,6 +8,14 @@ from django.shortcuts import render, redirect
 
 from ..Forms import RegistrationForm, LoginForm
 from ..Models import User, Predictions
+
+from threading import Thread
+
+
+def run_prediction():
+    while(True):
+        print('hello')
+        time.sleep(5)
 
 
 def welcome(request):
@@ -35,15 +45,15 @@ def search(request):
     try:
         user_type = None
         phone = request.session['phone']
-        loggedIn = True
         user = User(phone, None, None, None)
         user.get_user()
         user_type = user.user_type
+        loggedIn = True
     except KeyError as e:
         pass
     finally:
         query = request.GET.get('search')
-        chars = set(r'~!@#$%^&*()-+=`?;:\|.,<>[]{}/')
+        chars = set(r'~!@#$%^&*+=`?;:\|.<>[]{}/')
         if any((c in chars) for c in query):
             predictions = []
         else:
@@ -116,3 +126,5 @@ def logout(request):
     if request.session['phone']:
         del request.session['phone']
     return redirect('/')
+
+

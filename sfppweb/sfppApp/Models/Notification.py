@@ -18,6 +18,7 @@ class Notification:
                                             self.predictions[4], self.predictions[5], self.percent_change)
         if err is not None:
             return False
+        self.id = res
         return True
 
     def send_notification(self):

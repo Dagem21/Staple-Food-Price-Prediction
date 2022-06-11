@@ -13,6 +13,7 @@ def setting(request):
         user.get_user()
         loggedIn = True
     except KeyError as e:
+        print(e)
         pass
     finally:
         if not loggedIn:
