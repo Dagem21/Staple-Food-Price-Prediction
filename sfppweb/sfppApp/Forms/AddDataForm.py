@@ -107,19 +107,19 @@ class AddDataForm(forms.Form):
                     if any((c in chars) for c in dataItem):
                         err = "Special characters are not allowed in this field!"
                         raise forms.ValidationError({'dataItem': err})
-            if dataType == 'Weather Data':
+            if dataType == '0':
                 if dataItem != 'Precipitation' and dataItem != 'Maximum Temperature' and dataItem != 'Minimum Temperature':
                     err = "Data item doesnt fit with the selected data type!"
                     raise forms.ValidationError({'dataItem': err})
-            elif dataType == 'Fuel Data':
+            elif dataType == '2':
                 if dataItem != 'Diesel Price' and dataItem != 'Petrol Price':
                     err = "Data item doesnt fit with the selected data type!"
                     raise forms.ValidationError({'dataItem': err})
-            elif dataType == 'Exchange Rate Data':
+            elif dataType == '3':
                 if dataItem != 'Exchange Rate':
                     err = "Data item doesnt fit with the selected data type!"
                     raise forms.ValidationError({'dataItem': err})
-            elif dataType == 'Food Price':
+            elif dataType == '1':
                 if dataItem == 'Precipitation' or dataItem == 'Maximum Temperature' or dataItem == 'Minimum Temperature' \
                         or dataItem == 'Diesel Price' or dataItem == 'Petrol Price' or dataItem == 'Exchange Rate':
                     err = "Data item doesnt fit with the selected data type!"

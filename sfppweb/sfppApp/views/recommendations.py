@@ -1,4 +1,5 @@
 import calendar
+import time
 from datetime import datetime
 
 from django.shortcuts import render, redirect
@@ -14,6 +15,12 @@ def recommendations(request):
         loggedIn = True
         user = User(phone, None, None, None)
         user.get_user()
+        if int(time.time()) - int(request.session['time']) > 1800:
+            del request.session['phone']
+            del request.session['time']
+            loggedIn = False
+        else:
+            request.session['time'] = int(time.time())
     except KeyError as e:
         pass
     finally:

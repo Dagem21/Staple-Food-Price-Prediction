@@ -1,3 +1,5 @@
+import time
+
 from django.contrib import messages
 from django.shortcuts import render, redirect
 
@@ -12,6 +14,12 @@ def setting(request):
         user = User(phone, None, None, None)
         user.get_user()
         loggedIn = True
+        if int(time.time()) - int(request.session['time']) > 1800:
+            del request.session['phone']
+            del request.session['time']
+            loggedIn = False
+        else:
+            request.session['time'] = int(time.time())
     except KeyError as e:
         print(e)
         pass

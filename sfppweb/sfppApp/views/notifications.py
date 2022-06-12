@@ -1,3 +1,5 @@
+import time
+
 from django.shortcuts import render, redirect
 
 from ..Models import User
@@ -10,6 +12,12 @@ def notifications(request):
         user = User(phone, None, None, None)
         user.get_user()
         loggedIn = True
+        if int(time.time()) - int(request.session['time']) > 1800:
+            del request.session['phone']
+            del request.session['time']
+            loggedIn = False
+        else:
+            request.session['time'] = int(time.time())
     except KeyError as e:
         print(e)
         pass
@@ -29,6 +37,12 @@ def deleteNotification(request):
         loggedIn = True
         user = User(phone, None, None, None)
         user.get_user()
+        if int(time.time()) - int(request.session['time']) > 1800:
+            del request.session['phone']
+            del request.session['time']
+            loggedIn = False
+        else:
+            request.session['time'] = int(time.time())
     except KeyError as e:
         pass
     finally:

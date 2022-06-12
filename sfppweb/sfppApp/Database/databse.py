@@ -13,11 +13,11 @@ def close(conn):
 def connect():
     try:
         conn = psycopg2.connect(
-            host="ec2-54-165-178-178.compute-1.amazonaws.com",
-            port="5432",
-            database="da04hndikr9ck2",
-            user="blvqjyrgxrcgys",
-            password="cdc822835d3439e2836c57e8656e6b98d3e17c30534f355e55462dc093953373")
+            host="localhost",
+            port="5433",
+            database="sfpp_db",
+            user="postgres",
+            password="postgres")
         return conn, None
 
     except (Exception, psycopg2.DatabaseError) as error:

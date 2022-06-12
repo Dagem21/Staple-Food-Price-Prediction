@@ -6,6 +6,48 @@
     {% load static %}
     <link href="{% static 'sfppApp/CSS/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var datatype_arr = new Array("Weather Data","Food Price","Fuel Data","Exchange Rate Data");
+            $('#datatype').empty();
+            $('#dataitem').empty();
+            $.each(datatype_arr, function (i, item) {
+                $('#datatype').append($('<option>', {
+                    value: i,
+                    text : item,
+                }, '</option>' ));
+            });
+
+            // dataitems
+            var i_a = new Array();
+            i_a[0]="Precipitation|Maximum Temperature|Minimum Temperature";
+            i_a[1]="{{foods}}";
+            i_a[2]="Diesel Price|Petrol Price";
+            i_a[3]="Exchange Rate";
+
+            var item_arr = i_a[0].split("|");
+            $('#dataitem').empty();
+            $.each(item_arr, function (i, item_state) {
+                $('#dataitem').append($('<option>', {
+                    value: item_state,
+                    text: item_state,
+                }, '</option>'));
+            });
+
+            $('#datatype').change(function(){
+                var c = $(this).val();
+                var item_arr = i_a[c].split("|");
+                $('#dataitem').empty();
+                $.each(item_arr, function (i, item_state) {
+                    $('#dataitem').append($('<option>', {
+                        value: item_state,
+                        text: item_state,
+                    }, '</option>'));
+                });
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="d-grid gap-3">
@@ -37,8 +79,19 @@
         <section class="vh-100">
             <div class="container-fluid h-custom">
                 <div class="row d-flex justify-content-center align-items-center h-100">
-
                     <div>
+                        <div class="form-align-right">
+                            <div class="container-fluid">
+                                <form class="d-flex" action="/predict">
+                                    <button data-cy="predict-btn" class="btn btn-outline-success" type="submit">
+                                        Start Prediction
+                                    </button>
+                                </form>
+                                <p class="alert alert-danger d-flex align-items-center" role="alert">
+                                    N.B: The prediction will automatically run at the end of each month.
+                                </p>
+                            </div>
+                        </div>
                         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
                             <div>
                                 <h2 class="text-center">Add Data</h2>

@@ -1,5 +1,4 @@
 import calendar
-import threading
 import time
 from datetime import datetime
 
@@ -8,8 +7,6 @@ from django.shortcuts import render, redirect
 
 from ..Forms import RegistrationForm, LoginForm
 from ..Models import User, Predictions
-
-from threading import Thread
 
 
 def run_prediction():
@@ -26,6 +23,12 @@ def welcome(request):
         month = get_months(first_month)
         phone = request.session['phone']
         loggedIn = True
+        if int(time.time()) - int(request.session['time']) > 1800:
+            del request.session['phone']
+            del request.session['time']
+            loggedIn = False
+        else:
+            request.session['time'] = int(time.time())
         user = User(phone, None, None, None)
         user.get_user()
         return render(request, 'sfppApp/predictions.html',
@@ -49,6 +52,12 @@ def search(request):
         user.get_user()
         user_type = user.user_type
         loggedIn = True
+        if int(time.time()) - int(request.session['time']) > 1800:
+            del request.session['phone']
+            del request.session['time']
+            loggedIn = False
+        else:
+            request.session['time'] = int(time.time())
     except KeyError as e:
         pass
     finally:
@@ -97,6 +106,7 @@ def login(request):
         auth_user, err = user.login()
         if err is None:
             request.session['phone'] = auth_user.phone_number
+            request.session['time'] = int(time.time())
             return redirect('/')
     return render(request, 'sfppApp/login.html', {'form': form, 'error': err})
 

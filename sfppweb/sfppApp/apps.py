@@ -13,7 +13,7 @@ class SfppappConfig(AppConfig):
     def ready(self):
         if not TestThread().is_alive():
             print("Thread running ...")
-            # TestThread().start()
+            TestThread().start()
 
 
 class TestThread(Thread):
